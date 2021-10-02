@@ -1,0 +1,12 @@
+[package]
+name = "bgp-models"
+version = "0.1.0"
+edition = "2021"
+authors = ["Mingwei Zhang <mingwei@bgpkit.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+enum-primitive-derive = "0.2"
+num-traits = "0.2"
+ipnetwork = {version="0.18", default-features=false}
