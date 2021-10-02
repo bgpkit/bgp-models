@@ -1,12 +1,36 @@
+//! MRT message and relevant structs.
+
 use crate::mrt::bgp4mp::Bgp4Mp;
 use crate::mrt::tabledump::{TableDumpMessage, TableDumpV2Message};
 
 pub mod tabledump;
 pub mod bgp4mp;
 
-/// MRT record entry-point struct.
+/// MrtRecord is a wrapper struct that contains a header and a message.
 ///
-/// A MRT record is constcuted as the following:
+/// A MRT record is constructed as the following:
+/// ```text
+///  0                   1                   2                   3
+///  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+/// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/// |                      Header... (variable)                     |
+/// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/// |                      Message... (variable)
+/// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/// ```
+///
+/// See [CommonHeader] for the content in header, and [MrtMessage] for the
+/// message format.
+#[derive(Debug)]
+pub struct MrtRecord {
+    pub common_header: CommonHeader,
+    pub message: MrtMessage,
+}
+
+/// MRT common header.
+///
+/// A CommonHeader ([RFC6396 section 2][header-link]) is constructed as the following:
+/// ```text
 ///  0                   1                   2                   3
 ///  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -16,11 +40,10 @@ pub mod bgp4mp;
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// |                             Length                            |
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/// |                      Message... (variable)
-/// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-///
+/// ```
 ///
 /// Or with extended timestamp:
+/// ```text
 ///  0                   1                   2                   3
 ///  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -32,12 +55,25 @@ pub mod bgp4mp;
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// |                      Microsecond Timestamp                    |
 /// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-/// |                      Message... (variable)
-/// +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+/// ```
+///
+/// The headers include the following:
+/// - timestamp: 32 bits
+/// - entry_type: [EntryType] enum
+/// - entry_subtype: entry subtype
+/// - length: length of the message in octets
+/// - (`ET` type only) microsecond_timestamp: microsecond part of the timestamp.
+///   only applicable to the MRT message type with `_ET` suffix, such as
+///   `BGP4MP_ET`
+///
+/// [header-link]: https://datatracker.ietf.org/doc/html/rfc6396#section-2
 #[derive(Debug)]
-pub struct MrtRecord {
-    pub common_header: CommonHeader,
-    pub message: MrtMessage,
+pub struct CommonHeader {
+    pub timestamp: u32,
+    pub microsecond_timestamp: Option<u32>,
+    pub entry_type: EntryType,
+    pub entry_subtype: u16,
+    pub length: u32,
 }
 
 #[derive(Debug)]
@@ -47,6 +83,28 @@ pub enum MrtMessage {
     Bgp4Mp(Bgp4Mp),
 }
 
+/// MRT entry type.
+///
+/// EntryType indicates the type of the current MRT record. Type 0 to 10 are deprecated.
+///
+/// Excerpt from [RFC6396 section 4](https://datatracker.ietf.org/doc/html/rfc6396#section-4):
+/// ```text
+/// The following MRT Types are currently defined for the MRT format.
+/// The MRT Types that contain the "_ET" suffix in their names identify
+/// those types that use an Extended Timestamp MRT Header.  The Subtype
+/// and Message fields in these types remain as defined for the MRT Types
+/// of the same name without the "_ET" suffix.
+///
+///     11   OSPFv2
+///     12   TABLE_DUMP
+///     13   TABLE_DUMP_V2
+///     16   BGP4MP
+///     17   BGP4MP_ET
+///     32   ISIS
+///     33   ISIS_ET
+///     48   OSPFv3
+///     49   OSPFv3_ET
+/// ```
 #[derive(Debug, Primitive)]
 #[allow(non_camel_case_types)]
 pub enum EntryType {
@@ -72,24 +130,5 @@ pub enum EntryType {
     ISIS_ET = 33,
     OSPFv3 = 48,
     OSPFv3_ET = 49,
-}
-
-/// MRT common header
-///
-/// The headers include the following:
-/// - timestamp: 32 bits
-/// - entry_type: [EntryType] enum
-/// - entry_subtype: entry subtype
-/// - length: length of the message in octets
-/// - (`ET` type only) microsecond_timestamp: microsecond part of the timestamp.
-///   only applicable to the MRT message type with `_ET` suffix, such as
-///   `BGP4MP_ET`
-#[derive(Debug)]
-pub struct CommonHeader {
-    pub timestamp: u32,
-    pub microsecond_timestamp: Option<u32>,
-    pub entry_type: EntryType,
-    pub entry_subtype: u16,
-    pub length: u32,
 }
 

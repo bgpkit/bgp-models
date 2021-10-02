@@ -1,3 +1,5 @@
+//! BGP messages and relevant structs.
+
 pub mod attributes;
 
 use std::net::Ipv4Addr;

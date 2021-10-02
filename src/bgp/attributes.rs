@@ -1,3 +1,4 @@
+//! BGP attribute structs
 use core::fmt;
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
@@ -37,7 +38,10 @@ pub enum AttributeFlagsBit {
     ExtendedLengthBit = 0b00010000,
 }
 
-/// https://tools.ietf.org/html/rfc427
+/// Attribute types.
+///
+/// <https://tools.ietf.org/html/rfc427>
+/// ```text
 /// Name               Value       Definition
 /// ----               -----       ----------
 /// ORIGIN              1          See Section 5.1.1
@@ -47,14 +51,15 @@ pub enum AttributeFlagsBit {
 /// LOCAL_PREF          5          See Section 5.1.5
 /// ATOMIC_AGGREGATE    6          See Section 5.1.6
 /// AGGREGATOR          7          See Section 5.1.7
+/// ```
 ///
-/// https://tools.ietf.org/html/rfc4760
+/// <https://tools.ietf.org/html/rfc4760>
 /// Name               Value
 /// ----               -----
 /// MP_REACH_NLRI      14
 /// MP_UNREACH_NLRI    15
 ///
-/// All attributes: https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2
+/// All attributes: <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
 #[allow(non_camel_case_types)]
 #[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
 pub enum AttrType {
@@ -66,10 +71,10 @@ pub enum AttrType {
     ATOMIC_AGGREGATE = 6,
     AGGREGATOR = 7,
     COMMUNITIES = 8,
-    /// https://tools.ietf.org/html/rfc4456
+    /// <https://tools.ietf.org/html/rfc4456>
     ORIGINATOR_ID = 9,
     CLUSTER_LIST = 10,
-    /// https://tools.ietf.org/html/rfc4760
+    /// <https://tools.ietf.org/html/rfc4760>
     CLUSTER_ID = 13,
     MP_REACHABLE_NLRI = 14,
     MP_UNREACHABLE_NLRI = 15,
@@ -133,6 +138,7 @@ pub type AttributeMap = HashMap<AttrType, Attribute, BuildHasherDefault<Attribut
 // AS PATH //
 /////////////
 
+/// Enum of AS path segment.
 #[derive(Debug, PartialEq, Clone)]
 pub enum AsPathSegment {
     AsSequence(Vec<Asn>),
