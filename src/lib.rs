@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
-mod bgp;
-mod network;
-mod mrt;
+pub mod bgp;
+pub mod network;
+pub mod mrt;
 
 #[macro_use]
 extern crate enum_primitive_derive;
