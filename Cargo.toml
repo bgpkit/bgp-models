@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["Mingwei Zhang <mingwei@bgpkit.com>"]
 readme = "README.md"
+license = "MIT"
 repository = "https://github.com/bgpkit/bgp-models"
 documentation = "https://docs.rs/bgp-models"
 description = """
