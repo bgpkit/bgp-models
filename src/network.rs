@@ -1,5 +1,6 @@
 //! Common network-related structs.
 
+use std::fmt::{Display, Formatter};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use ipnetwork::IpNetwork;
 
@@ -66,6 +67,12 @@ pub struct NetworkPrefix {
 impl NetworkPrefix {
     pub fn new(prefix: IpNetwork, path_id: u32) -> NetworkPrefix {
         NetworkPrefix { prefix, path_id }
+    }
+}
+
+impl Display for NetworkPrefix {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.prefix)
     }
 }
 

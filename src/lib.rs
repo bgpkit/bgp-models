@@ -20,4 +20,3 @@ pub mod mrt;
 
 #[macro_use]
 extern crate enum_primitive_derive;
-
