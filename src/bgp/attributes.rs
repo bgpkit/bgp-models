@@ -96,6 +96,13 @@ pub enum Origin {
     INCOMPLETE = 2,
 }
 
+#[allow(non_camel_case_types)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
+pub enum AtomicAggregate {
+    NAG = 0,
+    AG = 1,
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Attribute {
     Origin(Origin),
@@ -103,7 +110,7 @@ pub enum Attribute {
     NextHop(Ipv4Addr),
     MultiExitDiscriminator(u32),
     LocalPreference(u32),
-    AtomicAggregate(()),
+    AtomicAggregate(AtomicAggregate),
     Aggregator(Asn, Ipv4Addr),
     Communities(Vec<Community>),
     LargeCommunities(Vec<LargeCommunity>),
