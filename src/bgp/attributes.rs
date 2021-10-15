@@ -88,9 +88,17 @@ pub enum AttrType {
     UNASSINGED = 39,
 }
 
+#[allow(non_camel_case_types)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
+pub enum Origin {
+    IGP = 0,
+    EGP = 1,
+    INCOMPLETE = 2,
+}
+
 #[derive(Debug, PartialEq)]
 pub enum Attribute {
-    Origin(u8),
+    Origin(Origin),
     AsPath(AsPath),
     NextHop(Ipv4Addr),
     MultiExitDiscriminator(u32),
