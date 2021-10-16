@@ -64,6 +64,7 @@ pub enum AttributeFlagsBit {
 #[allow(non_camel_case_types)]
 #[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
 pub enum AttrType {
+    RESERVED = 0,
     ORIGIN = 1,
     AS_PATH = 2,
     NEXT_HOP = 3,
