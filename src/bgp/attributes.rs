@@ -2,7 +2,7 @@
 use core::fmt;
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
-use std::net::Ipv4Addr;
+use std::net::IpAddr;
 use log::warn;
 use crate::network::*;
 
@@ -107,15 +107,15 @@ pub enum AtomicAggregate {
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
-    NextHop(Ipv4Addr),
+    NextHop(IpAddr),
     MultiExitDiscriminator(u32),
     LocalPreference(u32),
     AtomicAggregate(AtomicAggregate),
-    Aggregator(Asn, Ipv4Addr),
+    Aggregator(Asn, IpAddr),
     Communities(Vec<Community>),
     LargeCommunities(Vec<LargeCommunity>),
-    OriginatorId(Ipv4Addr),
-    Clusters(Vec<Ipv4Addr>),
+    OriginatorId(IpAddr),
+    Clusters(Vec<IpAddr>),
     MpReachableNlri(Nlri),
     MpUnreachableNlri(Nlri),
 }
