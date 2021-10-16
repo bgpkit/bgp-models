@@ -149,7 +149,7 @@ pub struct RibEntry {
 ///    itself and includes full MRT record headers.  The RIB entry MRT
 ///    records MUST immediately follow the PEER_INDEX_TABLE MRT record.
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PeerIndexTable{
     pub collector_bgp_id: u32,
     pub view_name_length: u16,
@@ -159,7 +159,7 @@ pub struct PeerIndexTable{
 }
 
 /// Peer struct.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Peer {
     pub peer_type: u8,
     pub peer_bgp_id: u32,
