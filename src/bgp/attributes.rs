@@ -118,8 +118,6 @@ pub enum Attribute {
     Clusters(Vec<Ipv4Addr>),
     MpReachableNlri(Nlri),
     MpUnreachableNlri(Nlri),
-    As4Aggregator(Asn, Ipv4Addr),
-    As4Path(AsPath),
 }
 
 // Attribute hasher
@@ -224,9 +222,9 @@ impl AsPath {
             return None
         } else if let (Some(Attribute::AsPath(v)), None) = (aspath, as4path) {
             return Some(v.clone())
-        } else if let (None, Some(Attribute::As4Path(v))) = (aspath, as4path) {
+        } else if let (None, Some(Attribute::AsPath(v))) = (aspath, as4path) {
             return Some(v.clone())
-        } else if let (Some(Attribute::AsPath(aspath)), Some(Attribute::As4Path(as4path))) = (aspath, as4path) {
+        } else if let (Some(Attribute::AsPath(aspath)), Some(Attribute::AsPath(as4path))) = (aspath, as4path) {
             if aspath.count_asns() < as4path.count_asns() {
                 return Some(aspath.clone())
             } else {
@@ -258,6 +256,7 @@ impl AsPath {
             None
         }
     }
+
 }
 
 impl fmt::Display for AsPath {
@@ -393,7 +392,7 @@ mod tests {
         let as4path = AsPath{
             segments: vec![AsPathSegment::AsSequence([2,3,7].to_vec())]
         };
-        let newpath = AsPath::merge_aspath_as4path(Some(&Attribute::AsPath(aspath)), Some(&Attribute::As4Path(as4path))).unwrap();
+        let newpath = AsPath::merge_aspath_as4path(Some(&Attribute::AsPath(aspath)), Some(&Attribute::AsPath(as4path))).unwrap();
         assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].to_vec()));
     }
 }
