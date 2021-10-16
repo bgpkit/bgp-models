@@ -3,6 +3,7 @@ use core::fmt;
 use std::collections::HashMap;
 use std::hash::{BuildHasherDefault, Hasher};
 use std::net::Ipv4Addr;
+use log::warn;
 use crate::network::*;
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
@@ -79,7 +80,6 @@ pub enum AttrType {
     MP_REACHABLE_NLRI = 14,
     MP_UNREACHABLE_NLRI = 15,
     EXTENDED_COMMUNITIES = 16,
-    // TODO: EXTENDED_COMMUNITIES = 16
     AS4_PATH = 17,
     AS4_AGGREGATOR = 18,
     LARGE_COMMUNITIES = 32,
@@ -195,6 +195,65 @@ impl AsPath {
 
     pub fn count_asns(&self) -> usize {
         self.segments.iter().map(AsPathSegment::count_asns).sum()
+    }
+
+
+    /// Construct AsPath from AS_PATH and AS4_PATH
+    ///
+    /// https://datatracker.ietf.org/doc/html/rfc6793#section-4.2.3
+    ///    If the number of AS numbers in the AS_PATH attribute is less than the
+    ///    number of AS numbers in the AS4_PATH attribute, then the AS4_PATH
+    ///    attribute SHALL be ignored, and the AS_PATH attribute SHALL be taken
+    ///    as the AS path information.
+    ///
+    ///    If the number of AS numbers in the AS_PATH attribute is larger than
+    ///    or equal to the number of AS numbers in the AS4_PATH attribute, then
+    ///    the AS path information SHALL be constructed by taking as many AS
+    ///    numbers and path segments as necessary from the leading part of the
+    ///    AS_PATH attribute, and then prepending them to the AS4_PATH attribute
+    ///    so that the AS path information has a number of AS numbers identical
+    ///    to that of the AS_PATH attribute.  Note that a valid
+    ///    AS_CONFED_SEQUENCE or AS_CONFED_SET path segment SHALL be prepended
+    ///    if it is either the leading path segment or is adjacent to a path
+    ///    segment that is prepended.
+    pub fn merge_aspath_as4path(aspath: Option<&Attribute>, as4path: Option<&Attribute>) -> Option<AsPath> {
+        if let (None, None) = (aspath, as4path) {
+            return None
+        } else if let (Some(Attribute::AsPath(v)), None) = (aspath, as4path) {
+            return Some(v.clone())
+        } else if let (None, Some(Attribute::As4Path(v))) = (aspath, as4path) {
+            return Some(v.clone())
+        } else if let (Some(Attribute::AsPath(aspath)), Some(Attribute::As4Path(as4path))) = (aspath, as4path) {
+            if aspath.count_asns() < as4path.count_asns() {
+                return Some(aspath.clone())
+            } else {
+                let mut as4iter = as4path.segments.iter();
+                let mut as4seg = as4iter.next();
+                let mut new_segs: Vec<AsPathSegment> = vec![];
+                if as4seg.is_none(){
+                    new_segs.extend(aspath.segments.clone());
+                    return Some(AsPath{ segments: new_segs })
+                }
+
+                for seg in &aspath.segments {
+                    let as4seg_unwrapped = as4seg.unwrap();
+                    if let (AsPathSegment::AsSequence(seq), AsPathSegment::AsSequence(seq4)) = (seg, as4seg_unwrapped) {
+                        let diff_len = seq.len() - seq4.len();
+                        let mut new_seq: Vec<Asn> = vec![];
+                        new_seq.extend(seq.iter().take(diff_len));
+                        new_seq.extend(seq4);
+                        new_segs.push(AsPathSegment::AsSequence(new_seq));
+                    } else {
+                        new_segs.push(as4seg_unwrapped.clone());
+                    }
+                    as4seg = as4iter.next();
+                }
+                return Some(AsPath{ segments: new_segs })
+            }
+        } else {
+            warn!("unable to merge aspath and as4path");
+            None
+        }
     }
 }
 
@@ -318,3 +377,20 @@ impl MpUnreachableNlri {
     }
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_aspath_as4path_merge() {
+        let aspath = AsPath{
+            segments: vec![AsPathSegment::AsSequence([1,2,3,5].to_vec())]
+        };
+        let as4path = AsPath{
+            segments: vec![AsPathSegment::AsSequence([2,3,7].to_vec())]
+        };
+        let newpath = AsPath::merge_aspath_as4path(Some(&Attribute::AsPath(aspath)), Some(&Attribute::As4Path(as4path))).unwrap();
+        assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].to_vec()));
+    }
+}
