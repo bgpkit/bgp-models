@@ -176,7 +176,7 @@ impl AsPathSegment {
 
 #[derive(Debug, PartialEq, Clone)]
 pub struct AsPath {
-    segments: Vec<AsPathSegment>,
+    pub segments: Vec<AsPathSegment>,
 }
 
 impl AsPath {
