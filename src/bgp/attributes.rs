@@ -165,8 +165,11 @@ pub enum AsPathSegment {
 impl AsPathSegment {
     pub fn count_asns(&self) -> usize {
         match self {
-            AsPathSegment::AsSequence(v) | AsPathSegment::ConfedSequence(v) => v.len(),
-            AsPathSegment::AsSet(_) | AsPathSegment::ConfedSet(_) => 1,
+            AsPathSegment::AsSequence(v) => {
+                v.len()
+            },
+            AsPathSegment::AsSet(_) => 1,
+            AsPathSegment::ConfedSequence(_) | AsPathSegment::ConfedSet(_)=> 0,
         }
     }
 }
