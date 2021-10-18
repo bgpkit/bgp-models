@@ -1,6 +1,7 @@
 //! BGP messages and relevant structs.
 
 pub mod attributes;
+pub mod display;
 
 use std::net::Ipv4Addr;
 use crate::bgp::attributes::Attributes;

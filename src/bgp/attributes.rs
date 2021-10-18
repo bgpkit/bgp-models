@@ -1,7 +1,5 @@
 //! BGP attribute structs
-use core::fmt;
 use std::net::IpAddr;
-use log::warn;
 use crate::network::*;
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
@@ -194,80 +192,34 @@ impl AsPath {
     ///    AS_CONFED_SEQUENCE or AS_CONFED_SET path segment SHALL be prepended
     ///    if it is either the leading path segment or is adjacent to a path
     ///    segment that is prepended.
-    pub fn merge_aspath_as4path(aspath: Option<&Attribute>, as4path: Option<&Attribute>) -> Option<AsPath> {
-        if let (None, None) = (aspath, as4path) {
-            return None
-        } else if let (Some(Attribute::AsPath(v)), None) = (aspath, as4path) {
-            return Some(v.clone())
-        } else if let (None, Some(Attribute::AsPath(v))) = (aspath, as4path) {
-            return Some(v.clone())
-        } else if let (Some(Attribute::AsPath(aspath)), Some(Attribute::AsPath(as4path))) = (aspath, as4path) {
-            if aspath.count_asns() < as4path.count_asns() {
-                return Some(aspath.clone())
+    pub fn merge_aspath_as4path(aspath: &AsPath, as4path: &AsPath) -> Option<AsPath> {
+        if aspath.count_asns() < as4path.count_asns() {
+            return Some(aspath.clone())
+        }
+
+        let mut as4iter = as4path.segments.iter();
+        let mut as4seg = as4iter.next();
+        let mut new_segs: Vec<AsPathSegment> = vec![];
+        if as4seg.is_none(){
+            new_segs.extend(aspath.segments.clone());
+            return Some(AsPath{ segments: new_segs })
+        }
+
+        for seg in &aspath.segments {
+            let as4seg_unwrapped = as4seg.unwrap();
+            if let (AsPathSegment::AsSequence(seq), AsPathSegment::AsSequence(seq4)) = (seg, as4seg_unwrapped) {
+                let diff_len = seq.len() - seq4.len();
+                let mut new_seq: Vec<Asn> = vec![];
+                new_seq.extend(seq.iter().take(diff_len));
+                new_seq.extend(seq4);
+                new_segs.push(AsPathSegment::AsSequence(new_seq));
             } else {
-                let mut as4iter = as4path.segments.iter();
-                let mut as4seg = as4iter.next();
-                let mut new_segs: Vec<AsPathSegment> = vec![];
-                if as4seg.is_none(){
-                    new_segs.extend(aspath.segments.clone());
-                    return Some(AsPath{ segments: new_segs })
-                }
-
-                for seg in &aspath.segments {
-                    let as4seg_unwrapped = as4seg.unwrap();
-                    if let (AsPathSegment::AsSequence(seq), AsPathSegment::AsSequence(seq4)) = (seg, as4seg_unwrapped) {
-                        let diff_len = seq.len() - seq4.len();
-                        let mut new_seq: Vec<Asn> = vec![];
-                        new_seq.extend(seq.iter().take(diff_len));
-                        new_seq.extend(seq4);
-                        new_segs.push(AsPathSegment::AsSequence(new_seq));
-                    } else {
-                        new_segs.push(as4seg_unwrapped.clone());
-                    }
-                    as4seg = as4iter.next();
-                }
-                return Some(AsPath{ segments: new_segs })
+                new_segs.push(as4seg_unwrapped.clone());
             }
-        } else {
-            warn!("unable to merge aspath and as4path");
-            None
+            as4seg = as4iter.next();
         }
-    }
 
-}
-
-impl fmt::Display for AsPath {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for (index, segment) in self.segments.iter().enumerate() {
-            write!(f, "{}", segment)?;
-            if index != self.segments.len() - 1 {
-                f.write_str(" ")?;
-            }
-        }
-        Ok(())
-    }
-}
-
-impl fmt::Display for AsPathSegment {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut write_vec = |v: &Vec<Asn>, separator, prefix, suffix| {
-            f.write_str(prefix)?;
-            if v.len() > 0 {
-                write!(f, "{}", &v[0])?;
-                for i in &v[1..] {
-                    write!(f, "{}{}", separator, i)?;
-                }
-            }
-            f.write_str(suffix)
-        };
-        match self {
-            AsPathSegment::AsSequence(ref s) | AsPathSegment::ConfedSequence(ref s) => {
-                write_vec(s, " ", "", "")
-            }
-            AsPathSegment::AsSet(ref s) | AsPathSegment::ConfedSet(ref s) => {
-                write_vec(s, ", ", "{ ", " }")
-            }
-        }
+        Some(AsPath{ segments: new_segs })
     }
 }
 
@@ -369,7 +321,7 @@ mod tests {
         let as4path = AsPath{
             segments: vec![AsPathSegment::AsSequence([2,3,7].to_vec())]
         };
-        let newpath = AsPath::merge_aspath_as4path(Some(&Attribute::AsPath(aspath)), Some(&Attribute::AsPath(as4path))).unwrap();
+        let newpath = AsPath::merge_aspath_as4path(&aspath, &as4path).unwrap();
         assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].to_vec()));
     }
 }
