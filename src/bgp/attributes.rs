@@ -1,7 +1,5 @@
 //! BGP attribute structs
 use core::fmt;
-use std::collections::HashMap;
-use std::hash::{BuildHasherDefault, Hasher};
 use std::net::IpAddr;
 use log::warn;
 use crate::network::*;
@@ -104,6 +102,7 @@ pub enum AtomicAggregate {
     AG = 1,
 }
 
+/// The `Attribute` enum represents different kinds of Attribute values.
 #[derive(Debug, PartialEq)]
 pub enum Attribute {
     Origin(Origin),
@@ -117,36 +116,13 @@ pub enum Attribute {
     LargeCommunities(Vec<LargeCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
-    MpReachableNlri(Nlri),
-    MpUnreachableNlri(Nlri),
+    Nlri(Nlri),
 }
 
-// Attribute hasher
-
-#[derive(Default)]
-pub struct AttributeHasher {
-    value: u64,
-}
-
-impl Hasher for AttributeHasher {
-    fn finish(&self) -> u64 {
-        self.value
-    }
-
-    fn write(&mut self, bytes: &[u8]) {
-        // if bytes.len() != 1 {
-        //     panic!("Trying to hash slice of size {:?}", bytes.len());
-        // }
-        self.value |= bytes[0] as u64;
-    }
-}
-
-#[derive(Debug)]
-pub struct Attributes {
-    pub map: AttributeMap,
-}
-
-pub type AttributeMap = HashMap<AttrType, Attribute, BuildHasherDefault<AttributeHasher>>;
+/// Type `Attributes` represents a vector of (AttrType, Attribute) pairs.
+///
+/// Note that we do not choose to use HashMap due to its inefficiency.
+pub type Attributes = Vec<(AttrType, Attribute)>;
 
 /////////////
 // AS PATH //

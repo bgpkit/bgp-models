@@ -1,7 +1,7 @@
 //! MRT table dump version 1 and 2 structs
 use std::net::IpAddr;
 use std::collections::HashMap;
-use crate::bgp::attributes::AttributeMap;
+use crate::bgp::attributes::Attributes;
 use crate::network::{Afi, Asn, NetworkPrefix, Safi};
 
 /// TableDump message version 1
@@ -14,7 +14,7 @@ pub struct TableDumpMessage {
     pub originated_time: u64,
     pub peer_address: IpAddr,
     pub peer_asn: Asn,
-    pub attributes: AttributeMap,
+    pub attributes: Attributes,
 }
 
 /// TableDump message version 2 enum
@@ -135,7 +135,7 @@ pub struct RibGenericEntries{
 pub struct RibEntry {
     pub peer_index: u16,
     pub originated_time: u32,
-    pub attributes: AttributeMap
+    pub attributes: Attributes
 }
 
 /// peer index table.

@@ -3,8 +3,8 @@
 pub mod attributes;
 
 use std::net::Ipv4Addr;
+use crate::bgp::attributes::Attributes;
 use crate::network::*;
-use crate::bgp::attributes::AttributeMap;
 
 #[derive(Debug, Primitive)]
 pub enum BgpMessageType {
@@ -61,7 +61,7 @@ pub struct OptParam {
 #[derive(Debug)]
 pub struct BgpUpdateMessage {
     pub withdrawn_prefixes: Vec<NetworkPrefix>,
-    pub attributes: AttributeMap,
+    pub attributes: Attributes,
     pub announced_prefixes: Vec<NetworkPrefix>,
 }
 
