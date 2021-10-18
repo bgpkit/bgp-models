@@ -227,7 +227,7 @@ impl AsPath {
 // COMMUNITIES //
 /////////////////
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Community {
     NoExport,
     NoAdvertise,
@@ -235,7 +235,7 @@ pub enum Community {
     Custom(Asn, u16),
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct LargeCommunity {
     global_administrator: u32,
     local_data: [u32; 2],

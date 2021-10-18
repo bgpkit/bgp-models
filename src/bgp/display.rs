@@ -3,14 +3,6 @@ use crate::bgp::attributes::{*};
 use crate::network::NextHopAddress;
 
 
-/// Macro that converts an Option<T:Display> to a String
-#[macro_export]
-macro_rules! option_to_string{
-    ($a:ident)=>{
-       if let Some(v)=$a { format!("{}", v) } else {"".to_string()}
-    }
-}
-
 impl Display for Origin {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let s = match self {
@@ -88,15 +80,5 @@ impl Display for AsPath {
             .collect::<Vec<String>>()
             .join(" ")
         )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-
-    #[test]
-    fn test_unwrap() {
-        let v = Some(&32);
-        println!("{}", option_to_string!(v));
     }
 }
