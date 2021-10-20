@@ -1,6 +1,6 @@
 [package]
 name = "bgp-models"
-version = "0.3.2"
+version = "0.3.3"
 edition = "2018"
 authors = ["Mingwei Zhang <mingwei@bgpkit.com>"]
 readme = "README.md"
@@ -19,3 +19,4 @@ enum-primitive-derive = "0.2"
 num-traits = "0.2"
 log = "0.4"
 ipnetwork = {version="0.18", default-features=false}
+itertools = "0.10.1"

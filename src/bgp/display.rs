@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use crate::bgp::attributes::{*};
 use crate::network::NextHopAddress;
+use itertools::{Itertools};
 
 
 impl Display for Origin {
@@ -22,6 +23,8 @@ impl Display for AtomicAggregate {
         })
     }
 }
+
+const NOEXPORT: &str ="no-export";
 
 impl Display for Community {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -64,21 +67,36 @@ impl Display for AsPath {
             .map(|seg| match seg {
                 AsPathSegment::AsSequence(v) | AsPathSegment::ConfedSequence(v) => v
                     .iter()
-                    .map(|x| x.to_string())
-                    .collect::<Vec<String>>()
                     .join(" "),
                 AsPathSegment::AsSet(v) | AsPathSegment::ConfedSet(v) => {
                     format!(
                         "{{{}}}",
                         v.iter()
-                            .map(|x| x.to_string())
-                            .collect::<Vec<String>>()
                             .join(",")
                     )
                 }
             })
-            .collect::<Vec<String>>()
             .join(" ")
         )
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_aspath_display() {
+        let aspath = AsPath{
+            segments: vec![AsPathSegment::AsSequence([1,2,3,5].to_vec())]
+        };
+        let mut paths = vec![];
+        for _ in 0..1000000{
+            paths.push(aspath.clone());
+        }
+        for p in paths{
+            p.to_string();
+        }
+    }
+
 }
