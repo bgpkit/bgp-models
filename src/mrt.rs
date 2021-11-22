@@ -67,7 +67,7 @@ pub struct MrtRecord {
 ///   `BGP4MP_ET`
 ///
 /// [header-link]: https://datatracker.ietf.org/doc/html/rfc6396#section-2
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct CommonHeader {
     pub timestamp: u32,
     pub microsecond_timestamp: Option<u32>,
@@ -105,7 +105,7 @@ pub enum MrtMessage {
 ///     48   OSPFv3
 ///     49   OSPFv3_ET
 /// ```
-#[derive(Debug, Primitive)]
+#[derive(Debug, Primitive, Copy, Clone)]
 #[allow(non_camel_case_types)]
 pub enum EntryType {
     // START DEPRECATED
