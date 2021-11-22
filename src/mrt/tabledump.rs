@@ -5,7 +5,7 @@ use crate::bgp::attributes::Attributes;
 use crate::network::{Afi, Asn, NetworkPrefix, Safi};
 
 /// TableDump message version 1
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct TableDumpMessage {
     pub view_number: u16,
     pub sequence_number: u16,
@@ -18,7 +18,7 @@ pub struct TableDumpMessage {
 }
 
 /// TableDump message version 2 enum
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum TableDumpV2Message {
     PeerIndexTable(PeerIndexTable),
     RibAfiEntries(RibAfiEntries),
@@ -28,7 +28,7 @@ pub enum TableDumpV2Message {
 /// TableDump version 2 subtypes.
 ///
 /// <https://www.iana.org/assignments/mrt/mrt.xhtml#subtype-codes>
-#[derive(Debug, Primitive)]
+#[derive(Debug, Primitive, Copy, Clone)]
 pub enum TableDumpV2Type{
     PeerIndexTable = 1,
     RibIpv4Unicast = 2,
@@ -73,7 +73,7 @@ pub enum TableDumpV2Type{
 ///        |         Entry Count           |  RIB Entries (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RibAfiEntries{
     pub sequence_number: u32,
     pub prefix: NetworkPrefix,
@@ -101,7 +101,7 @@ pub struct RibAfiEntries{
 ///        |         Entry Count           |  RIB Entries (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RibGenericEntries{
     pub sequence_number: u32,
     pub afi: Afi,
@@ -131,7 +131,7 @@ pub struct RibGenericEntries{
 ///        |                    BGP Attributes... (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct RibEntry {
     pub peer_index: u16,
     pub originated_time: u32,

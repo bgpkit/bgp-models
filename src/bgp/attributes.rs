@@ -58,7 +58,7 @@ pub enum AttributeFlagsBit {
 ///
 /// All attributes: <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
 #[allow(non_camel_case_types)]
-#[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum AttrType {
     RESERVED = 0,
     ORIGIN = 1,
@@ -86,7 +86,7 @@ pub enum AttrType {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum Origin {
     IGP = 0,
     EGP = 1,
@@ -94,14 +94,14 @@ pub enum Origin {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Primitive, PartialEq, Eq, Hash, Clone)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum AtomicAggregate {
     NAG = 0,
     AG = 1,
 }
 
 /// The `Attribute` enum represents different kinds of Attribute values.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
@@ -245,7 +245,7 @@ impl AsPath {
 // COMMUNITIES //
 /////////////////
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Community {
     NoExport,
     NoAdvertise,
@@ -253,7 +253,7 @@ pub enum Community {
     Custom(Asn, u16),
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct LargeCommunity {
     global_administrator: u32,
     local_data: [u32; 2],
@@ -272,7 +272,7 @@ impl LargeCommunity {
 // NLRI //
 //////////
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Nlri {
     pub afi: Afi,
     pub safi: Safi,
@@ -280,7 +280,7 @@ pub struct Nlri {
     pub prefixes: Vec<NetworkPrefix>,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct MpReachableNlri {
     afi: Afi,
     safi: Safi,
@@ -304,12 +304,12 @@ impl MpReachableNlri {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct MpReachableNlriV2 {
     next_hop: NextHopAddress,
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct MpUnreachableNlri {
     afi: Afi,
     safi: Safi,
@@ -330,7 +330,6 @@ impl MpUnreachableNlri {
 #[cfg(test)]
 mod tests {
     use crate::bgp::attributes::{AsPath, AsPathSegment};
-    use super::*;
 
     #[test]
     fn test_aspath_as4path_merge() {
