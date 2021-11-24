@@ -1,6 +1,7 @@
 //! BGP attribute structs
 use std::fmt::{Display, Formatter};
 use std::net::IpAddr;
+use itertools::Itertools;
 use crate::network::*;
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
