@@ -175,7 +175,6 @@ impl AsPath {
         self.segments.iter().map(AsPathSegment::count_asns).sum()
     }
 
-
     /// Construct AsPath from AS_PATH and AS4_PATH
     ///
     /// https://datatracker.ietf.org/doc/html/rfc6793#section-4.2.3

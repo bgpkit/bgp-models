@@ -18,6 +18,7 @@ pub mod bgp;
 pub mod network;
 pub mod mrt;
 pub mod prelude;
+pub mod err;
 
 #[macro_use]
 extern crate enum_primitive_derive;

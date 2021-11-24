@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter};
 use std::net::IpAddr;
+use std::str::FromStr;
 use itertools::Itertools;
 use crate::bgp::attributes::{AsPath, AtomicAggregate, Community, Origin};
 use crate::network::{Asn, NetworkPrefix};
@@ -38,6 +39,29 @@ pub struct BgpElem {
     pub aggr_asn: Option<Asn>,
     pub aggr_ip: Option<IpAddr>,
 }
+
+impl Default for BgpElem {
+    fn default() -> Self {
+        BgpElem {
+            timestamp: 0.0,
+            elem_type: ElemType::ANNOUNCE,
+            peer_ip: IpAddr::from_str("0.0.0.0").unwrap(),
+            peer_asn: 0,
+            prefix: NetworkPrefix::from_str("0.0.0.0/0").unwrap(),
+            next_hop: None,
+            as_path: None,
+            origin_asns: None,
+            origin: None,
+            local_pref: None,
+            med: None,
+            communities: None,
+            atomic: None,
+            aggr_asn: None,
+            aggr_ip: None
+        }
+    }
+}
+
 #[inline(always)]
 pub fn option_to_string<T>(o: &Option<T>) -> String
     where
@@ -86,3 +110,22 @@ impl Display for BgpElem {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use std::str::FromStr;
+    use std::default::Default;
+    use super::*;
+
+    #[test]
+    fn test_default() {
+        let elem = BgpElem{
+            timestamp: 0.0,
+            elem_type: ElemType::ANNOUNCE,
+            peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
+            peer_asn: 0,
+            prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
+            ..Default::default()
+        };
+        dbg!(elem);
+    }
+}
