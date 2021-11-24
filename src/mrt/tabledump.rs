@@ -166,4 +166,3 @@ pub struct Peer {
     pub peer_address: IpAddr,
     pub peer_asn: Asn,
 }
-

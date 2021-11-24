@@ -1,10 +1,12 @@
 //! BGP messages and relevant structs.
 
 pub mod attributes;
-pub mod display;
+pub mod elem;
+
+pub use crate::bgp::attributes::*;
+pub use crate::bgp::elem::*;
 
 use std::net::Ipv4Addr;
-use crate::bgp::attributes::Attributes;
 use crate::network::*;
 
 #[derive(Debug, Primitive, Copy, Clone)]
@@ -77,3 +79,4 @@ pub struct BgpNotificationMessage {
 pub struct BgpKeepAliveMessage {
 
 }
+

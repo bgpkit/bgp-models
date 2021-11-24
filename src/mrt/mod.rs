@@ -1,10 +1,10 @@
 //! MRT message and relevant structs.
 
-use crate::mrt::bgp4mp::Bgp4Mp;
-use crate::mrt::tabledump::{TableDumpMessage, TableDumpV2Message};
-
 pub mod tabledump;
 pub mod bgp4mp;
+
+pub use crate::mrt::bgp4mp::*;
+pub use crate::mrt::tabledump::*;
 
 /// MrtRecord is a wrapper struct that contains a header and a message.
 ///

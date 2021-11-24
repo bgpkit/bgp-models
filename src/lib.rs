@@ -17,6 +17,7 @@ RFCs. Here is a list of them:
 pub mod bgp;
 pub mod network;
 pub mod mrt;
+pub mod prelude;
 
 #[macro_use]
 extern crate enum_primitive_derive;
