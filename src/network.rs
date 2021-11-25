@@ -4,6 +4,7 @@ use std::fmt::{Display, Formatter};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::str::FromStr;
 use ipnetwork::IpNetwork;
+use serde::{Serialize, Serializer};
 use crate::err::BgpModelsError;
 
 /// Meta information for an address/prefix.
@@ -64,6 +65,12 @@ pub enum NextHopAddress {
 pub struct NetworkPrefix {
     pub prefix: IpNetwork,
     pub path_id: u32,
+}
+
+impl Serialize for NetworkPrefix {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        serializer.serialize_str(self.to_string().as_str())
+    }
 }
 
 impl FromStr for NetworkPrefix {

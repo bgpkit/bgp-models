@@ -3,6 +3,7 @@ use std::fmt::{Display, Formatter};
 use std::net::IpAddr;
 use itertools::Itertools;
 use crate::network::*;
+use serde::{Serialize, Serializer};
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
 /// Optional bit.  It defines whether the attribute is optional (if
@@ -408,7 +409,33 @@ impl Display for AsPath {
     }
 }
 
+///////////////
+// SERIALIZE //
+///////////////
 
+impl Serialize for AsPath {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        serializer.serialize_str(self.to_string().as_str())
+    }
+}
+
+impl Serialize for Origin {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        serializer.serialize_str(self.to_string().as_str())
+    }
+}
+
+impl Serialize for Community {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        serializer.serialize_str(self.to_string().as_str())
+    }
+}
+
+impl Serialize for AtomicAggregate {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        serializer.serialize_str(self.to_string().as_str())
+    }
+}
 
 #[cfg(test)]
 mod tests {

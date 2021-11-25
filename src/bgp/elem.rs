@@ -4,12 +4,13 @@ use std::str::FromStr;
 use itertools::Itertools;
 use crate::bgp::attributes::{AsPath, AtomicAggregate, Community, Origin};
 use crate::network::{Asn, NetworkPrefix};
+use serde::Serialize;
 
 /// Element type.
 ///
 /// - ANNOUNCE: announcement/reachable prefix
 /// - WITHDRAW: withdrawn/unreachable prefix
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, Serialize)]
 pub enum ElemType {
     ANNOUNCE,
     WITHDRAW,
@@ -21,7 +22,7 @@ pub enum ElemType {
 ///
 /// Note: it consumes more memory to construct BGP elements due to duplicate information
 /// shared between multiple elements of one MRT record.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct BgpElem {
     pub timestamp: f64,
     pub elem_type: ElemType,
