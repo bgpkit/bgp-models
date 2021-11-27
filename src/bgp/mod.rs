@@ -6,6 +6,7 @@ pub mod community;
 
 pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
+pub use crate::bgp::community::*;
 
 use std::net::Ipv4Addr;
 use crate::network::*;

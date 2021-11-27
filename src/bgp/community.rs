@@ -3,10 +3,6 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 use serde::Serialize;
 use crate::network::Asn;
 
-/////////////////
-// COMMUNITIES //
-/////////////////
-
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Community {
     NoExport,
