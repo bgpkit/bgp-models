@@ -13,8 +13,8 @@ pub enum Community {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct LargeCommunity {
-    global_administrator: u32,
-    local_data: [u32; 2],
+    pub global_administrator: u32,
+    pub local_data: [u32; 2],
 }
 
 impl LargeCommunity {
@@ -86,12 +86,12 @@ pub enum ExtendedCommunity {
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Ipv6AddressSpecificExtendedCommunity {
-    ec_type: u8,
-    ec_subtype: u8,
+    pub ec_type: u8,
+    pub ec_subtype: u8,
     // 16 octets
-    global_administrator: Ipv6Addr,
+    pub global_administrator: Ipv6Addr,
     // 2 octets
-    local_administrator: [u8; 2]
+    pub local_administrator: [u8; 2]
 }
 
 
@@ -100,12 +100,12 @@ pub struct Ipv6AddressSpecificExtendedCommunity {
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.1>
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct TwoOctetAsSpecific {
-    ec_type: u8,
-    ec_subtype: u8,
+    pub ec_type: u8,
+    pub ec_subtype: u8,
     // 2 octet
-    global_administrator: Asn,
+    pub global_administrator: Asn,
     // 4 octet
-    local_administrator: [u8; 4],
+    pub local_administrator: [u8; 4],
 }
 
 /// Four-Octet AS Specific Extended Community
@@ -113,12 +113,12 @@ pub struct TwoOctetAsSpecific {
 /// <https://datatracker.ietf.org/doc/html/rfc5668#section-2>
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct FourOctetAsSpecific {
-    ec_type: u8,
-    ec_subtype: u8,
+    pub ec_type: u8,
+    pub ec_subtype: u8,
     // 4 octet
-    global_administrator: Asn,
+    pub global_administrator: Asn,
     // 2 octet
-    local_administrator: [u8; 2],
+    pub local_administrator: [u8; 2],
 }
 
 /// IPv4 Address Specific Extended Community
@@ -126,12 +126,12 @@ pub struct FourOctetAsSpecific {
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.2>
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Ipv4AddressSpecific {
-    ec_type: u8,
-    ec_subtype: u8,
+    pub ec_type: u8,
+    pub ec_subtype: u8,
     // 4 octet
-    global_administrator: Ipv4Addr,
+    pub global_administrator: Ipv4Addr,
     // 2 octet
-    local_administrator: [u8; 4],
+    pub local_administrator: [u8; 4],
 }
 
 /// Opaque Extended Community
@@ -139,10 +139,10 @@ pub struct Ipv4AddressSpecific {
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.3>
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Opaque {
-    ec_type: u8,
-    ec_subtype: u8,
+    pub ec_type: u8,
+    pub ec_subtype: u8,
     // 6 octet
-    value: [u8; 6],
+    pub value: [u8; 6],
 }
 
 fn bytes_to_string(bytes: &[u8]) -> String {
