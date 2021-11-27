@@ -2,6 +2,7 @@
 
 pub mod attributes;
 pub mod elem;
+pub mod community;
 
 pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;

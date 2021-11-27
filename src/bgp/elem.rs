@@ -2,7 +2,8 @@ use std::fmt::{Display, Formatter};
 use std::net::IpAddr;
 use std::str::FromStr;
 use itertools::Itertools;
-use crate::bgp::attributes::{AsPath, AtomicAggregate, Community, Origin};
+use crate::bgp::attributes::{AsPath, AtomicAggregate, Origin};
+use crate::bgp::community::*;
 use crate::network::{Asn, NetworkPrefix};
 use serde::Serialize;
 

@@ -4,6 +4,7 @@ use std::net::IpAddr;
 use itertools::Itertools;
 use crate::network::*;
 use serde::{Serialize, Serializer};
+use crate::bgp::community::{Community, ExtendedCommunity, Ipv6AddressSpecificExtendedCommunity, LargeCommunity};
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
 /// Optional bit.  It defines whether the attribute is optional (if
@@ -40,26 +41,9 @@ pub enum AttributeFlagsBit {
 
 /// Attribute types.
 ///
-/// <https://tools.ietf.org/html/rfc427>
-/// ```text
-/// Name               Value       Definition
-/// ----               -----       ----------
-/// ORIGIN              1          See Section 5.1.1
-/// AS_PATH             2          See Section 5.1.2
-/// NEXT_HOP            3          See Section 5.1.3
-/// MULTI_EXIT_DISC     4          See Section 5.1.4
-/// LOCAL_PREF          5          See Section 5.1.5
-/// ATOMIC_AGGREGATE    6          See Section 5.1.6
-/// AGGREGATOR          7          See Section 5.1.7
-/// ```
-///
-/// <https://tools.ietf.org/html/rfc4760>
-/// Name               Value
-/// ----               -----
-/// MP_REACH_NLRI      14
-/// MP_UNREACH_NLRI    15
-///
-/// All attributes: <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
+/// All attributes currently defined and not Unassigned or Deprecated are included here.
+/// To see the full list, check out IANA at:
+/// <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
 #[allow(non_camel_case_types)]
 #[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
 pub enum AttrType {
@@ -79,13 +63,23 @@ pub enum AttrType {
     CLUSTER_ID = 13,
     MP_REACHABLE_NLRI = 14,
     MP_UNREACHABLE_NLRI = 15,
+    /// <https://datatracker.ietf.org/doc/html/rfc4360>
     EXTENDED_COMMUNITIES = 16,
     AS4_PATH = 17,
     AS4_AGGREGATOR = 18,
+    PMSI_TUNNEL = 22,
+    TUNNEL_ENCAPSULATION = 23,
+    TRAFFIC_ENGINEERING = 24,
+    IPV6_ADDRESS_SPECIFIC_EXTENDED_COMMUNITIES = 25,
+    AIGP = 26,
+    PE_DISTINGUISHER_LABELS = 27,
+    BGP_LS_ATTRIBUTE = 29,
     LARGE_COMMUNITIES = 32,
-    // FIXME: 33 is BGPsec_Path
-    ATTRIBUTES_END = 33,
-    UNASSINGED = 39,
+    BGPSEC_PATH = 33,
+    SFP_ATTRIBUTE = 37,
+    BFD_DISCRIMINATOR = 38,
+    BGP_PREFIX_SID = 40,
+    ATTR_SET = 128,
 }
 
 #[allow(non_camel_case_types)]
@@ -115,6 +109,8 @@ pub enum Attribute {
     Aggregator(Asn, IpAddr),
     Communities(Vec<Community>),
     LargeCommunities(Vec<LargeCommunity>),
+    ExtendedCommunity(Vec<ExtendedCommunity>),
+    IPv6AddressSpecificExtendedCommunity(Vec<Ipv6AddressSpecificExtendedCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
     Nlri(Nlri),
@@ -243,33 +239,6 @@ impl AsPath {
     }
 }
 
-/////////////////
-// COMMUNITIES //
-/////////////////
-
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub enum Community {
-    NoExport,
-    NoAdvertise,
-    NoExportSubConfed,
-    Custom(Asn, u16),
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct LargeCommunity {
-    global_administrator: u32,
-    local_data: [u32; 2],
-}
-
-impl LargeCommunity {
-    pub fn new(global_administrator: u32, local_data: [u32; 2]) -> LargeCommunity {
-        LargeCommunity {
-            global_administrator,
-            local_data,
-        }
-    }
-}
-
 //////////
 // NLRI //
 //////////
@@ -352,27 +321,6 @@ impl Display for AtomicAggregate {
     }
 }
 
-const NOEXPORT: &str ="no-export";
-
-impl Display for Community {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Community::NoExport => {
-                "no-export".to_string()
-            }
-            Community::NoAdvertise => {
-                "no-advertise".to_string()
-            }
-            Community::NoExportSubConfed => {
-                "no-export-sub-confed".to_string()
-            }
-            Community::Custom(asn, value) => {
-                format!("{}:{}", asn, value)
-            }
-        }
-        )
-    }
-}
 
 impl Display for NextHopAddress {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
@@ -420,12 +368,6 @@ impl Serialize for AsPath {
 }
 
 impl Serialize for Origin {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
-
-impl Serialize for Community {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
         serializer.serialize_str(self.to_string().as_str())
     }

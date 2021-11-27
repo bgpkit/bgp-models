@@ -1,6 +1,6 @@
 [package]
 name = "bgp-models"
-version = "0.4.1"
+version = "0.5.0-rc.1"
 edition = "2018"
 authors = ["Mingwei Zhang <mingwei@bgpkit.com>"]
 readme = "README.md"
