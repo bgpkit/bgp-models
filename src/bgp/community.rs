@@ -131,7 +131,7 @@ pub struct Ipv4AddressSpecific {
     // 4 octet
     pub global_administrator: Ipv4Addr,
     // 2 octet
-    pub local_administrator: [u8; 4],
+    pub local_administrator: [u8; 2],
 }
 
 /// Opaque Extended Community
