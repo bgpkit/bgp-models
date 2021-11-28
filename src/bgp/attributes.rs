@@ -102,6 +102,7 @@ pub enum AtomicAggregate {
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
+    As4Path(AsPath),
     NextHop(IpAddr),
     MultiExitDiscriminator(u32),
     LocalPreference(u32),
