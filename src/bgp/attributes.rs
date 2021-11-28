@@ -112,7 +112,8 @@ pub enum Attribute {
     LargeCommunities(Vec<LargeCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
-    Nlri(Nlri),
+    MpReachNlri(Nlri),
+    MpUnreachNlri(Nlri),
 }
 
 /////////////
