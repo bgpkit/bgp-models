@@ -15,14 +15,14 @@ use crate::err::BgpModelsError;
 /// The meta information includes:
 /// 1. `afi`: address family ([Afi]): IPv4 or IPv6,
 /// 2. `asn_len`: AS number length ([AsnLength]): 16 or 32 bits.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct AddrMeta {
     pub afi: Afi,
     pub asn_len: AsnLength,
 }
 
 /// AS number length: 16 or 32 bits.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum AsnLength {
     Bits16,
     Bits32,
@@ -34,7 +34,7 @@ pub type Asn = u32;
 /// AFI -- Address Family Identifier
 ///
 /// https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml
-#[derive(Debug, PartialEq, Primitive, Clone, Copy)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
 pub enum Afi {
     Ipv4 = 1,
     Ipv6 = 2,
@@ -43,7 +43,7 @@ pub enum Afi {
 /// SAFI -- Subsequent Address Family Identifier
 ///
 /// SAFI can be: Unicast, Multicast, or both.
-#[derive(Debug, PartialEq, Primitive, Clone, Copy)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
 pub enum Safi {
     Unicast = 1,
     Multicast = 2,
@@ -53,7 +53,7 @@ pub enum Safi {
 /// enum that represents the type of the next hop address.
 ///
 /// [NextHopAddress] is used when parsing for next hops in [Nlri].
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Serialize)]
 pub enum NextHopAddress {
     Ipv4(Ipv4Addr),
     Ipv6(Ipv6Addr),

@@ -45,7 +45,7 @@ pub enum AttributeFlagsBit {
 /// To see the full list, check out IANA at:
 /// <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
 #[allow(non_camel_case_types)]
-#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone, Serialize)]
 pub enum AttrType {
     RESERVED = 0,
     ORIGIN = 1,
@@ -98,7 +98,7 @@ pub enum AtomicAggregate {
 }
 
 /// The `Attribute` enum represents different kinds of Attribute values.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
@@ -240,7 +240,7 @@ impl AsPath {
 // NLRI //
 //////////
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct Nlri {
     pub afi: Afi,
     pub safi: Safi,
@@ -248,7 +248,7 @@ pub struct Nlri {
     pub prefixes: Vec<NetworkPrefix>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct MpReachableNlri {
     afi: Afi,
     safi: Safi,
