@@ -56,7 +56,7 @@ pub struct BgpElemRef<'a> {
     pub origin: &'a Option<Origin>,
     pub local_pref: &'a Option<u32>,
     pub med: &'a Option<u32>,
-    pub communities: &'a Option<Vec<Community>>,
+    pub communities: &'a Option<Vec<MetaCommunity>>,
     pub atomic: &'a Option<AtomicAggregate>,
     pub aggr_asn: &'a Option<Asn>,
     pub aggr_ip: &'a Option<IpAddr>,
