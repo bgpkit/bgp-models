@@ -36,7 +36,7 @@ pub struct BgpElem {
     pub origin: Option<Origin>,
     pub local_pref: Option<u32>,
     pub med: Option<u32>,
-    pub communities: Option<Vec<Community>>,
+    pub communities: Option<Vec<MetaCommunity>>,
     pub atomic: Option<AtomicAggregate>,
     pub aggr_asn: Option<Asn>,
     pub aggr_ip: Option<IpAddr>,
@@ -95,7 +95,7 @@ macro_rules! option_to_string{
 }
 
 #[inline(always)]
-pub fn option_to_string_communities(o: &Option<Vec<Community>>) -> String {
+pub fn option_to_string_communities(o: &Option<Vec<MetaCommunity>>) -> String {
     if let Some(v) = o {
         v.iter()
             .join(" ")
