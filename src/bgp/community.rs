@@ -1,3 +1,4 @@
+use std::fmt::Formatter;
 use enum_primitive_derive::Primitive;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use serde::Serialize;
@@ -5,6 +6,14 @@ use crate::network::Asn;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Community {
+    RegularCommunity(RegularCommunity),
+    ExtendedCommunity(ExtendedCommunity),
+    Ipv6SpecificExtendedCommunity(Ipv6AddressSpecificExtendedCommunity),
+    LargeCommunity(LargeCommunity),
+}
+
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum RegularCommunity {
     NoExport,
     NoAdvertise,
     NoExportSubConfed,
@@ -145,29 +154,34 @@ pub struct Opaque {
     pub value: [u8; 6],
 }
 
+/////////////
+// DISPLAY //
+/////////////
+
 fn bytes_to_string(bytes: &[u8]) -> String {
     bytes.iter().map(|x| format!("{:02X}", x)).collect::<Vec<String>>().join("")
 }
 
-impl Serialize for Community {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
+
+impl std::fmt::Display for Ipv6AddressSpecificExtendedCommunity {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}:{}:{}:{}", self.ec_type, self.ec_subtype, self.global_administrator, bytes_to_string(&self.local_administrator))
     }
 }
 
-impl std::fmt::Display for Community {
+impl std::fmt::Display for RegularCommunity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
-            Community::NoExport => {
+            RegularCommunity::NoExport => {
                 "no-export".to_string()
             }
-            Community::NoAdvertise => {
+            RegularCommunity::NoAdvertise => {
                 "no-advertise".to_string()
             }
-            Community::NoExportSubConfed => {
+            RegularCommunity::NoExportSubConfed => {
                 "no-export-sub-confed".to_string()
             }
-            Community::Custom(asn, value) => {
+            RegularCommunity::Custom(asn, value) => {
                 format!("{}:{}", asn, value)
             }
         }
@@ -175,27 +189,9 @@ impl std::fmt::Display for Community {
     }
 }
 
-impl Serialize for ExtendedCommunity {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
-
-impl Serialize for LargeCommunity {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
-
 impl std::fmt::Display for LargeCommunity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}:{}:{}", self.global_administrator, self.local_data[0], self.local_data[1])
-    }
-}
-
-impl std::fmt::Display for Ipv6AddressSpecificExtendedCommunity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}:{}:{}", self.ec_type, self.ec_subtype, self.global_administrator, bytes_to_string(&self.local_administrator))
     }
 }
 
@@ -223,3 +219,36 @@ impl std::fmt::Display for ExtendedCommunity {
         })
     }
 }
+
+impl std::fmt::Display for Community {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let string = match self {
+            Community::RegularCommunity(c) => {c.to_string()}
+            Community::ExtendedCommunity(c) => {c.to_string()}
+            Community::Ipv6SpecificExtendedCommunity(c) => {c.to_string()}
+            Community::LargeCommunity(c) => {c.to_string()}
+        };
+        write!(f, "{}", string)
+    }
+}
+
+///////////////
+// SERIALIZE //
+///////////////
+
+macro_rules! impl_serialize {
+    ($a:ident) => {
+        impl Serialize for $a {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+                serializer.serialize_str(self.to_string().as_str())
+            }
+        }
+    }
+}
+
+impl_serialize!(RegularCommunity);
+impl_serialize!(ExtendedCommunity);
+impl_serialize!(LargeCommunity);
+impl_serialize!(Ipv6AddressSpecificExtendedCommunity);
+
+impl_serialize!(Community);

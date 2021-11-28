@@ -4,7 +4,7 @@ use std::net::IpAddr;
 use itertools::Itertools;
 use crate::network::*;
 use serde::{Serialize, Serializer};
-use crate::bgp::community::{Community, ExtendedCommunity, Ipv6AddressSpecificExtendedCommunity, LargeCommunity};
+use crate::bgp::community::Community;
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
 /// Optional bit.  It defines whether the attribute is optional (if
@@ -108,9 +108,6 @@ pub enum Attribute {
     AtomicAggregate(AtomicAggregate),
     Aggregator(Asn, IpAddr),
     Communities(Vec<Community>),
-    LargeCommunities(Vec<LargeCommunity>),
-    ExtendedCommunity(Vec<ExtendedCommunity>),
-    IPv6AddressSpecificExtendedCommunity(Vec<Ipv6AddressSpecificExtendedCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
     Nlri(Nlri),

@@ -64,15 +64,13 @@ impl Default for BgpElem {
     }
 }
 
-#[inline(always)]
-pub fn option_to_string<T>(o: &Option<T>) -> String
-    where
-        T: Display,
-{
-    if let Some(v) = o {
-        v.to_string()
-    } else {
-        String::new()
+macro_rules! option_to_string{
+    ($a:expr) => {
+        if let Some(v) = $a {
+            v.to_string()
+        } else {
+            String::new()
+        }
     }
 }
 
@@ -98,15 +96,15 @@ impl Display for BgpElem {
             &self.peer_ip,
             &self.peer_asn,
             &self.prefix,
-            option_to_string(&self.as_path),
-            option_to_string(&self.origin),
-            option_to_string(&self.next_hop),
-            option_to_string(&self.local_pref),
-            option_to_string(&self.med),
+            option_to_string!(&self.as_path),
+            option_to_string!(&self.origin),
+            option_to_string!(&self.next_hop),
+            option_to_string!(&self.local_pref),
+            option_to_string!(&self.med),
             option_to_string_communities(&self.communities),
-            option_to_string(&self.atomic),
-            option_to_string(&self.aggr_asn),
-            option_to_string(&self.aggr_ip),
+            option_to_string!(&self.atomic),
+            option_to_string!(&self.aggr_asn),
+            option_to_string!(&self.aggr_ip),
         );
         write!(f, "{}", format)
     }
