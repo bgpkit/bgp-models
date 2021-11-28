@@ -4,7 +4,7 @@ use std::net::IpAddr;
 use itertools::Itertools;
 use crate::network::*;
 use serde::{Serialize, Serializer};
-use crate::bgp::community::{Community, ExtendedCommunity, Ipv6AddressSpecificExtendedCommunity, LargeCommunity};
+use crate::bgp::{ExtendedCommunity, LargeCommunity, Community};
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
 /// Optional bit.  It defines whether the attribute is optional (if
@@ -45,7 +45,7 @@ pub enum AttributeFlagsBit {
 /// To see the full list, check out IANA at:
 /// <https://www.iana.org/assignments/bgp-parameters/bgp-parameters.xhtml#bgp-parameters-2>
 #[allow(non_camel_case_types)]
-#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone)]
+#[derive(Debug, Primitive, PartialEq, Eq, Hash, Copy, Clone, Serialize)]
 pub enum AttrType {
     RESERVED = 0,
     ORIGIN = 1,
@@ -98,28 +98,24 @@ pub enum AtomicAggregate {
 }
 
 /// The `Attribute` enum represents different kinds of Attribute values.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
+    As4Path(AsPath),
     NextHop(IpAddr),
     MultiExitDiscriminator(u32),
     LocalPreference(u32),
     AtomicAggregate(AtomicAggregate),
     Aggregator(Asn, IpAddr),
     Communities(Vec<Community>),
+    ExtendedCommunities(Vec<ExtendedCommunity>),
     LargeCommunities(Vec<LargeCommunity>),
-    ExtendedCommunity(Vec<ExtendedCommunity>),
-    IPv6AddressSpecificExtendedCommunity(Vec<Ipv6AddressSpecificExtendedCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
-    Nlri(Nlri),
+    MpReachNlri(Nlri),
+    MpUnreachNlri(Nlri),
 }
-
-/// Type `Attributes` represents a vector of (AttrType, Attribute) pairs.
-///
-/// Note that we do not choose to use HashMap due to its inefficiency.
-pub type Attributes = Vec<(AttrType, Attribute)>;
 
 /////////////
 // AS PATH //
@@ -243,7 +239,7 @@ impl AsPath {
 // NLRI //
 //////////
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct Nlri {
     pub afi: Afi,
     pub safi: Safi,
@@ -251,7 +247,7 @@ pub struct Nlri {
     pub prefixes: Vec<NetworkPrefix>,
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize)]
 pub struct MpReachableNlri {
     afi: Afi,
     safi: Safi,

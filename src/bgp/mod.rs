@@ -8,10 +8,11 @@ pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
 pub use crate::bgp::community::*;
 
+use serde::Serialize;
 use std::net::Ipv4Addr;
 use crate::network::*;
 
-#[derive(Debug, Primitive, Copy, Clone)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize)]
 pub enum BgpMessageType {
     OPEN = 1,
     UPDATE = 2,
@@ -20,7 +21,7 @@ pub enum BgpMessageType {
 }
 
 // https://tools.ietf.org/html/rfc4271#section-4
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum BgpMessage{
     Open(BgpOpenMessage),
     Update(BgpUpdateMessage),
@@ -49,7 +50,7 @@ pub enum BgpMessage{
 ///  |                                                               |
 ///  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct BgpOpenMessage {
     pub version: u8,
     pub asn: Asn,
@@ -58,26 +59,26 @@ pub struct BgpOpenMessage {
     pub opt_params: Vec<OptParam>
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct OptParam {
 
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct BgpUpdateMessage {
     pub withdrawn_prefixes: Vec<NetworkPrefix>,
-    pub attributes: Attributes,
+    pub attributes: Vec<Attribute>,
     pub announced_prefixes: Vec<NetworkPrefix>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct BgpNotificationMessage {
     pub error_code: u8,
     pub error_subcode: u8,
     pub data: Vec<u8>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct BgpKeepAliveMessage {
 
 }

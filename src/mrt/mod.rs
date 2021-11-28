@@ -5,6 +5,7 @@ pub mod bgp4mp;
 
 pub use crate::mrt::bgp4mp::*;
 pub use crate::mrt::tabledump::*;
+use serde::Serialize;
 
 /// MrtRecord is a wrapper struct that contains a header and a message.
 ///
@@ -21,7 +22,7 @@ pub use crate::mrt::tabledump::*;
 ///
 /// See [CommonHeader] for the content in header, and [MrtMessage] for the
 /// message format.
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct MrtRecord {
     pub common_header: CommonHeader,
     pub message: MrtMessage,
@@ -67,7 +68,7 @@ pub struct MrtRecord {
 ///   `BGP4MP_ET`
 ///
 /// [header-link]: https://datatracker.ietf.org/doc/html/rfc6396#section-2
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct CommonHeader {
     pub timestamp: u32,
     pub microsecond_timestamp: Option<u32>,
@@ -76,7 +77,7 @@ pub struct CommonHeader {
     pub length: u32,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum MrtMessage {
     TableDumpMessage(TableDumpMessage),
     TableDumpV2Message(TableDumpV2Message),
@@ -105,7 +106,7 @@ pub enum MrtMessage {
 ///     48   OSPFv3
 ///     49   OSPFv3_ET
 /// ```
-#[derive(Debug, Primitive, Copy, Clone)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize)]
 #[allow(non_camel_case_types)]
 pub enum EntryType {
     // START DEPRECATED

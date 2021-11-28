@@ -36,10 +36,30 @@ pub struct BgpElem {
     pub origin: Option<Origin>,
     pub local_pref: Option<u32>,
     pub med: Option<u32>,
-    pub communities: Option<Vec<Community>>,
+    pub communities: Option<Vec<MetaCommunity>>,
     pub atomic: Option<AtomicAggregate>,
     pub aggr_asn: Option<Asn>,
     pub aggr_ip: Option<IpAddr>,
+}
+
+/// Reference version of the [BgpElem] struct.
+#[derive(Debug, Clone, Serialize)]
+pub struct BgpElemRef<'a> {
+    pub timestamp: &'a f64,
+    pub elem_type: &'a ElemType,
+    pub peer_ip: &'a IpAddr,
+    pub peer_asn: &'a Asn,
+    pub prefix: &'a NetworkPrefix,
+    pub next_hop: &'a Option<IpAddr>,
+    pub as_path: &'a Option<AsPath>,
+    pub origin_asns: &'a Option<Vec<Asn>>,
+    pub origin: &'a Option<Origin>,
+    pub local_pref: &'a Option<u32>,
+    pub med: &'a Option<u32>,
+    pub communities: &'a Option<Vec<MetaCommunity>>,
+    pub atomic: &'a Option<AtomicAggregate>,
+    pub aggr_asn: &'a Option<Asn>,
+    pub aggr_ip: &'a Option<IpAddr>,
 }
 
 impl Default for BgpElem {
@@ -64,20 +84,18 @@ impl Default for BgpElem {
     }
 }
 
-#[inline(always)]
-pub fn option_to_string<T>(o: &Option<T>) -> String
-    where
-        T: Display,
-{
-    if let Some(v) = o {
-        v.to_string()
-    } else {
-        String::new()
+macro_rules! option_to_string{
+    ($a:expr) => {
+        if let Some(v) = $a {
+            v.to_string()
+        } else {
+            String::new()
+        }
     }
 }
 
 #[inline(always)]
-pub fn option_to_string_communities(o: &Option<Vec<Community>>) -> String {
+pub fn option_to_string_communities(o: &Option<Vec<MetaCommunity>>) -> String {
     if let Some(v) = o {
         v.iter()
             .join(" ")
@@ -98,15 +116,15 @@ impl Display for BgpElem {
             &self.peer_ip,
             &self.peer_asn,
             &self.prefix,
-            option_to_string(&self.as_path),
-            option_to_string(&self.origin),
-            option_to_string(&self.next_hop),
-            option_to_string(&self.local_pref),
-            option_to_string(&self.med),
+            option_to_string!(&self.as_path),
+            option_to_string!(&self.origin),
+            option_to_string!(&self.next_hop),
+            option_to_string!(&self.local_pref),
+            option_to_string!(&self.med),
             option_to_string_communities(&self.communities),
-            option_to_string(&self.atomic),
-            option_to_string(&self.aggr_asn),
-            option_to_string(&self.aggr_ip),
+            option_to_string!(&self.atomic),
+            option_to_string!(&self.aggr_asn),
+            option_to_string!(&self.aggr_ip),
         );
         write!(f, "{}", format)
     }

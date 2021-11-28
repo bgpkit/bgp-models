@@ -1,7 +1,15 @@
+use std::fmt::Formatter;
 use enum_primitive_derive::Primitive;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use serde::Serialize;
 use crate::network::Asn;
+
+#[derive(Debug, PartialEq, Copy, Clone)]
+pub enum MetaCommunity {
+    Community(Community),
+    ExtendedCommunity(ExtendedCommunity),
+    LargeCommunity(LargeCommunity),
+}
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Community {
@@ -81,11 +89,12 @@ pub enum ExtendedCommunity {
     NonTransitiveIpv4AddressSpecific(Ipv4AddressSpecific),
     NonTransitiveFourOctetAsSpecific(FourOctetAsSpecific),
     NonTransitiveOpaque(Opaque),
+    Ipv6AddressSpecific(Ipv6AddressSpecific),
     Raw([u8; 8]),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Ipv6AddressSpecificExtendedCommunity {
+pub struct Ipv6AddressSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
     // 16 octets
@@ -145,15 +154,14 @@ pub struct Opaque {
     pub value: [u8; 6],
 }
 
+/////////////
+// DISPLAY //
+/////////////
+
 fn bytes_to_string(bytes: &[u8]) -> String {
     bytes.iter().map(|x| format!("{:02X}", x)).collect::<Vec<String>>().join("")
 }
 
-impl Serialize for Community {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
 
 impl std::fmt::Display for Community {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -175,27 +183,9 @@ impl std::fmt::Display for Community {
     }
 }
 
-impl Serialize for ExtendedCommunity {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
-
-impl Serialize for LargeCommunity {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
-        serializer.serialize_str(self.to_string().as_str())
-    }
-}
-
 impl std::fmt::Display for LargeCommunity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}:{}", self.global_administrator, self.local_data[0], self.local_data[1])
-    }
-}
-
-impl std::fmt::Display for Ipv6AddressSpecificExtendedCommunity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}:{}:{}", self.ec_type, self.ec_subtype, self.global_administrator, bytes_to_string(&self.local_administrator))
+        write!(f, "lg:{}:{}:{}", self.global_administrator, self.local_data[0], self.local_data[1])
     }
 }
 
@@ -203,23 +193,57 @@ impl std::fmt::Display for ExtendedCommunity {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
             ExtendedCommunity::TransitiveTwoOctetAsSpecific(ec) | ExtendedCommunity::NonTransitiveTwoOctetAsSpecific(ec) => {
-                format!("{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
+                format!("ecas2:{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
             }
             ExtendedCommunity::TransitiveIpv4AddressSpecific(ec) |
             ExtendedCommunity::NonTransitiveIpv4AddressSpecific(ec) => {
-                format!("{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
+                format!("ecv4:{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
             }
             ExtendedCommunity::TransitiveFourOctetAsSpecific(ec) |
             ExtendedCommunity::NonTransitiveFourOctetAsSpecific(ec) => {
-                format!("{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
+                format!("ecas4:{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
             }
             ExtendedCommunity::TransitiveOpaque(ec) |
             ExtendedCommunity::NonTransitiveOpaque(ec) => {
-                format!("{}:{}:{}", ec.ec_type, ec.ec_subtype, bytes_to_string(&ec.value))
+                format!("ecop:{}:{}:{}", ec.ec_type, ec.ec_subtype, bytes_to_string(&ec.value))
+            }
+            ExtendedCommunity::Ipv6AddressSpecific(ec) => {
+                format!("ecv6:{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
             }
             ExtendedCommunity::Raw(ec) => {
-                format!("{}", bytes_to_string(ec))
+                format!("ecraw:{}", bytes_to_string(ec))
             }
         })
     }
 }
+
+impl std::fmt::Display for MetaCommunity {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}",
+            match self {
+                MetaCommunity::Community(c) => {c.to_string()}
+                MetaCommunity::ExtendedCommunity(c) => {c.to_string()}
+                MetaCommunity::LargeCommunity(c) => {c.to_string()}
+            }
+        )
+    }
+}
+
+///////////////
+// SERIALIZE //
+///////////////
+
+macro_rules! impl_serialize {
+    ($a:ident) => {
+        impl Serialize for $a {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::Serializer {
+                serializer.serialize_str(self.to_string().as_str())
+            }
+        }
+    }
+}
+
+impl_serialize!(Community);
+impl_serialize!(ExtendedCommunity);
+impl_serialize!(LargeCommunity);
+impl_serialize!(MetaCommunity);
