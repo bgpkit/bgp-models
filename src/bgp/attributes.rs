@@ -99,6 +99,7 @@ pub enum AtomicAggregate {
 
 /// The `Attribute` enum represents different kinds of Attribute values.
 #[derive(Debug, PartialEq, Clone, Serialize)]
+#[serde(untagged)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
