@@ -42,6 +42,26 @@ pub struct BgpElem {
     pub aggr_ip: Option<IpAddr>,
 }
 
+/// Reference version of the [BgpElem] struct.
+#[derive(Debug, Clone, Serialize)]
+pub struct BgpElemRef<'a> {
+    pub timestamp: &'a f64,
+    pub elem_type: &'a ElemType,
+    pub peer_ip: &'a IpAddr,
+    pub peer_asn: &'a Asn,
+    pub prefix: &'a NetworkPrefix,
+    pub next_hop: &'a Option<IpAddr>,
+    pub as_path: &'a Option<AsPath>,
+    pub origin_asns: &'a Option<Vec<Asn>>,
+    pub origin: &'a Option<Origin>,
+    pub local_pref: &'a Option<u32>,
+    pub med: &'a Option<u32>,
+    pub communities: &'a Option<Vec<Community>>,
+    pub atomic: &'a Option<AtomicAggregate>,
+    pub aggr_asn: &'a Option<Asn>,
+    pub aggr_ip: &'a Option<IpAddr>,
+}
+
 impl Default for BgpElem {
     fn default() -> Self {
         BgpElem {

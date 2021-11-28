@@ -4,7 +4,7 @@ use std::net::IpAddr;
 use itertools::Itertools;
 use crate::network::*;
 use serde::{Serialize, Serializer};
-use crate::bgp::community::Community;
+use crate::bgp::{ExtendedCommunity, LargeCommunity, Community};
 
 /// The high-order bit (bit 0) of the Attribute Flags octet is the
 /// Optional bit.  It defines whether the attribute is optional (if
@@ -99,7 +99,6 @@ pub enum AtomicAggregate {
 
 /// The `Attribute` enum represents different kinds of Attribute values.
 #[derive(Debug, PartialEq, Clone, Serialize)]
-#[serde(untagged)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
@@ -109,15 +108,12 @@ pub enum Attribute {
     AtomicAggregate(AtomicAggregate),
     Aggregator(Asn, IpAddr),
     Communities(Vec<Community>),
+    ExtendedCommunities(Vec<ExtendedCommunity>),
+    LargeCommunities(Vec<LargeCommunity>),
     OriginatorId(IpAddr),
     Clusters(Vec<IpAddr>),
     Nlri(Nlri),
 }
-
-/// Type `Attributes` represents a vector of (AttrType, Attribute) pairs.
-///
-/// Note that we do not choose to use HashMap due to its inefficiency.
-pub type Attributes = Vec<(AttrType, Attribute)>;
 
 /////////////
 // AS PATH //

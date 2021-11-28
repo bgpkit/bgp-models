@@ -1,4 +1,3 @@
-use std::fmt::Formatter;
 use enum_primitive_derive::Primitive;
 use std::net::{Ipv4Addr, Ipv6Addr};
 use serde::Serialize;
@@ -6,14 +5,6 @@ use crate::network::Asn;
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 pub enum Community {
-    RegularCommunity(RegularCommunity),
-    ExtendedCommunity(ExtendedCommunity),
-    Ipv6SpecificExtendedCommunity(Ipv6AddressSpecificExtendedCommunity),
-    LargeCommunity(LargeCommunity),
-}
-
-#[derive(Debug, PartialEq, Copy, Clone)]
-pub enum RegularCommunity {
     NoExport,
     NoAdvertise,
     NoExportSubConfed,
@@ -90,11 +81,12 @@ pub enum ExtendedCommunity {
     NonTransitiveIpv4AddressSpecific(Ipv4AddressSpecific),
     NonTransitiveFourOctetAsSpecific(FourOctetAsSpecific),
     NonTransitiveOpaque(Opaque),
+    Ipv6AddressSpecific(Ipv6AddressSpecific),
     Raw([u8; 8]),
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct Ipv6AddressSpecificExtendedCommunity {
+pub struct Ipv6AddressSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
     // 16 octets
@@ -163,25 +155,19 @@ fn bytes_to_string(bytes: &[u8]) -> String {
 }
 
 
-impl std::fmt::Display for Ipv6AddressSpecificExtendedCommunity {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}:{}:{}:{}", self.ec_type, self.ec_subtype, self.global_administrator, bytes_to_string(&self.local_administrator))
-    }
-}
-
-impl std::fmt::Display for RegularCommunity {
+impl std::fmt::Display for Community {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", match self {
-            RegularCommunity::NoExport => {
+            Community::NoExport => {
                 "no-export".to_string()
             }
-            RegularCommunity::NoAdvertise => {
+            Community::NoAdvertise => {
                 "no-advertise".to_string()
             }
-            RegularCommunity::NoExportSubConfed => {
+            Community::NoExportSubConfed => {
                 "no-export-sub-confed".to_string()
             }
-            RegularCommunity::Custom(asn, value) => {
+            Community::Custom(asn, value) => {
                 format!("{}:{}", asn, value)
             }
         }
@@ -213,22 +199,13 @@ impl std::fmt::Display for ExtendedCommunity {
             ExtendedCommunity::NonTransitiveOpaque(ec) => {
                 format!("{}:{}:{}", ec.ec_type, ec.ec_subtype, bytes_to_string(&ec.value))
             }
+            ExtendedCommunity::Ipv6AddressSpecific(ec) => {
+                format!("{}:{}:{}:{}", ec.ec_type, ec.ec_subtype, ec.global_administrator, bytes_to_string(&ec.local_administrator))
+            }
             ExtendedCommunity::Raw(ec) => {
                 format!("{}", bytes_to_string(ec))
             }
         })
-    }
-}
-
-impl std::fmt::Display for Community {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        let string = match self {
-            Community::RegularCommunity(c) => {c.to_string()}
-            Community::ExtendedCommunity(c) => {c.to_string()}
-            Community::Ipv6SpecificExtendedCommunity(c) => {c.to_string()}
-            Community::LargeCommunity(c) => {c.to_string()}
-        };
-        write!(f, "{}", string)
     }
 }
 
@@ -246,9 +223,6 @@ macro_rules! impl_serialize {
     }
 }
 
-impl_serialize!(RegularCommunity);
+impl_serialize!(Community);
 impl_serialize!(ExtendedCommunity);
 impl_serialize!(LargeCommunity);
-impl_serialize!(Ipv6AddressSpecificExtendedCommunity);
-
-impl_serialize!(Community);
