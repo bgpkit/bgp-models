@@ -163,7 +163,7 @@ pub struct PeerIndexTable{
 #[derive(Debug, Clone, Serialize)]
 pub struct Peer {
     pub peer_type: u8,
-    pub peer_bgp_id: u32,
+    pub peer_bgp_id: Ipv4Addr,
     pub peer_address: IpAddr,
     pub peer_asn: Asn,
 }
