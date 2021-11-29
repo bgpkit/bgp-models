@@ -1,5 +1,5 @@
 //! MRT table dump version 1 and 2 structs
-use std::net::IpAddr;
+use std::net::{IpAddr, Ipv4Addr};
 use std::collections::HashMap;
 use crate::network::{Afi, Asn, NetworkPrefix, Safi};
 use serde::Serialize;
@@ -152,7 +152,7 @@ pub struct RibEntry {
 /// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct PeerIndexTable{
-    pub collector_bgp_id: u32,
+    pub collector_bgp_id: Ipv4Addr,
     pub view_name_length: u16,
     pub view_name: String,
     pub peer_count: u16,
