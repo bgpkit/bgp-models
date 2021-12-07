@@ -80,6 +80,8 @@ pub enum AttrType {
     BFD_DISCRIMINATOR = 38,
     BGP_PREFIX_SID = 40,
     ATTR_SET = 128,
+    /// <https://datatracker.ietf.org/doc/html/rfc2042>
+    DEVELOPMENT = 255,
 }
 
 #[allow(non_camel_case_types)]
@@ -115,6 +117,7 @@ pub enum Attribute {
     Clusters(Vec<IpAddr>),
     MpReachNlri(Nlri),
     MpUnreachNlri(Nlri),
+    Development(Vec<u8>),
 }
 
 /////////////
