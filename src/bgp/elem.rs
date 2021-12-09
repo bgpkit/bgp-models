@@ -11,7 +11,7 @@ use serde::Serialize;
 ///
 /// - ANNOUNCE: announcement/reachable prefix
 /// - WITHDRAW: withdrawn/unreachable prefix
-#[derive(Debug, Clone, Copy, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
 pub enum ElemType {
     ANNOUNCE,
     WITHDRAW,

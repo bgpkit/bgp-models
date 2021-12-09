@@ -5,7 +5,7 @@ use crate::bgp::BgpMessage;
 use crate::network::{Afi, Asn};
 
 /// BGP states enum.
-#[derive(Debug, Primitive, Copy, Clone, Serialize)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
 pub enum BgpState {
     Idle = 1,
     Connect = 2,
@@ -27,7 +27,7 @@ pub enum Bgp4Mp {
 }
 
 /// BGP4MP message subtypes.
-#[derive(Debug, Primitive, Copy, Clone, Serialize)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
 pub enum Bgp4MpType {
     Bgp4MpStateChange = 0,
     Bgp4MpMessage = 1,

@@ -12,7 +12,7 @@ use serde::Serialize;
 use std::net::Ipv4Addr;
 use crate::network::*;
 
-#[derive(Debug, Primitive, Copy, Clone, Serialize)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
 pub enum BgpMessageType {
     OPEN = 1,
     UPDATE = 2,
