@@ -415,18 +415,4 @@ mod tests {
         assert!(origins.is_some());
         assert_eq!(origins.unwrap(), vec![7,8]);
     }
-
-    #[test]
-    fn test_aspath_display() {
-        let aspath = AsPath{
-            segments: vec![AsPathSegment::AsSequence([1,2,3,5].to_vec())]
-        };
-        let mut paths = vec![];
-        for _ in 0..1000000{
-            paths.push(aspath.clone());
-        }
-        for p in paths{
-            p.to_string();
-        }
-    }
 }
