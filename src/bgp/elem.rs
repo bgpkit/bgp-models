@@ -1,3 +1,4 @@
+use std::cmp::Ordering;
 use std::fmt::{Display, Formatter};
 use std::net::IpAddr;
 use std::str::FromStr;
@@ -23,7 +24,7 @@ pub enum ElemType {
 ///
 /// Note: it consumes more memory to construct BGP elements due to duplicate information
 /// shared between multiple elements of one MRT record.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct BgpElem {
     pub timestamp: f64,
     pub elem_type: ElemType,
@@ -40,6 +41,20 @@ pub struct BgpElem {
     pub atomic: Option<AtomicAggregate>,
     pub aggr_asn: Option<Asn>,
     pub aggr_ip: Option<IpAddr>,
+}
+
+impl Eq for BgpElem {}
+
+impl PartialOrd<Self> for BgpElem {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for BgpElem {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.timestamp.partial_cmp(&other.timestamp).unwrap().then_with(||self.peer_ip.cmp(&other.peer_ip))
+    }
 }
 
 /// Reference version of the [BgpElem] struct.
@@ -147,5 +162,36 @@ mod tests {
             ..Default::default()
         };
         dbg!(elem);
+    }
+
+    #[test]
+    fn test_sorting() {
+        let elem1 = BgpElem{
+            timestamp: 1.1,
+            elem_type: ElemType::ANNOUNCE,
+            peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
+            peer_asn: 0,
+            prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
+            ..Default::default()
+        };
+        let elem2 = BgpElem{
+            timestamp: 1.2,
+            elem_type: ElemType::ANNOUNCE,
+            peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
+            peer_asn: 0,
+            prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
+            ..Default::default()
+        };
+        let elem3 = BgpElem{
+            timestamp: 1.2,
+            elem_type: ElemType::ANNOUNCE,
+            peer_ip: IpAddr::from_str("192.168.1.2").unwrap(),
+            peer_asn: 0,
+            prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
+            ..Default::default()
+        };
+
+        assert_eq!(elem1<elem2, true);
+        assert_eq!(elem2<elem3, true);
     }
 }
