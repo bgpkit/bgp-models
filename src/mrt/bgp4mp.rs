@@ -44,19 +44,7 @@ pub enum Bgp4MpType {
 /// BGP4MP state change message.
 #[derive(Debug, Clone, Serialize)]
 pub struct Bgp4MpStateChange {
-    pub peer_asn: Asn,
-    pub local_asn: Asn,
-    pub interface_index: u16,
-    pub address_family: Afi,
-    pub peer_addr: IpAddr,
-    pub local_addr: IpAddr,
-    pub old_state: BgpState,
-    pub new_state: BgpState,
-}
-
-/// BGP4MP state change message with 4-byte ASN.
-#[derive(Debug, Clone, Serialize)]
-pub struct Bgp4MpStateChangeAs4 {
+    pub msg_type: Bgp4MpType,
     pub peer_asn: Asn,
     pub local_asn: Asn,
     pub interface_index: u16,
@@ -70,6 +58,7 @@ pub struct Bgp4MpStateChangeAs4 {
 /// BGP4MP message.
 #[derive(Debug, Clone, Serialize)]
 pub struct Bgp4MpMessage {
+    pub msg_type: Bgp4MpType,
     pub peer_asn: Asn,
     pub local_asn: Asn,
     pub interface_index: u16,

@@ -76,6 +76,7 @@ pub enum TableDumpV2Type{
 /// ```
 #[derive(Debug, Clone, Serialize)]
 pub struct RibAfiEntries{
+    pub rib_type: TableDumpV2Type,
     pub sequence_number: u32,
     pub prefix: NetworkPrefix,
     pub rib_entries: Vec<RibEntry>,

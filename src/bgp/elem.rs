@@ -83,7 +83,7 @@ impl Default for BgpElem {
             timestamp: 0.0,
             elem_type: ElemType::ANNOUNCE,
             peer_ip: IpAddr::from_str("0.0.0.0").unwrap(),
-            peer_asn: 0,
+            peer_asn: 0.into(),
             prefix: NetworkPrefix::from_str("0.0.0.0/0").unwrap(),
             next_hop: None,
             as_path: None,
@@ -157,7 +157,7 @@ mod tests {
             timestamp: 0.0,
             elem_type: ElemType::ANNOUNCE,
             peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
-            peer_asn: 0,
+            peer_asn: 0.into(),
             prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
             ..Default::default()
         };
@@ -170,7 +170,7 @@ mod tests {
             timestamp: 1.1,
             elem_type: ElemType::ANNOUNCE,
             peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
-            peer_asn: 0,
+            peer_asn: 0.into(),
             prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
             ..Default::default()
         };
@@ -178,7 +178,7 @@ mod tests {
             timestamp: 1.2,
             elem_type: ElemType::ANNOUNCE,
             peer_ip: IpAddr::from_str("192.168.1.1").unwrap(),
-            peer_asn: 0,
+            peer_asn: 0.into(),
             prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
             ..Default::default()
         };
@@ -186,7 +186,7 @@ mod tests {
             timestamp: 1.2,
             elem_type: ElemType::ANNOUNCE,
             peer_ip: IpAddr::from_str("192.168.1.2").unwrap(),
-            peer_asn: 0,
+            peer_asn: 0.into(),
             prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
             ..Default::default()
         };

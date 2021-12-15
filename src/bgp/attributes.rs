@@ -385,20 +385,20 @@ mod tests {
     #[test]
     fn test_aspath_as4path_merge() {
         let aspath = AsPath{
-            segments: vec![AsPathSegment::AsSequence([1,2,3,5].to_vec())]
+            segments: vec![AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec())]
         };
         let as4path = AsPath{
-            segments: vec![AsPathSegment::AsSequence([2,3,7].to_vec())]
+            segments: vec![AsPathSegment::AsSequence([2,3,7].map(|i|{i.into()}).to_vec())]
         };
         let newpath = AsPath::merge_aspath_as4path(&aspath, &as4path).unwrap();
-        assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].to_vec()));
+        assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].map(|i|{i.into()}).to_vec()));
     }
 
     #[test]
     fn test_get_origin() {
         let aspath = AsPath{
             segments: vec![
-                AsPathSegment::AsSequence([1,2,3,5].to_vec()),
+                AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec()),
             ]
         };
         let origins = aspath.get_origin();
@@ -407,8 +407,8 @@ mod tests {
 
         let aspath = AsPath{
             segments: vec![
-                AsPathSegment::AsSequence([1,2,3,5].to_vec()),
-                AsPathSegment::AsSet([7,8].to_vec())
+                AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec()),
+                AsPathSegment::AsSequence([7,8].map(|i|{i.into()}).to_vec()),
             ]
         };
         let origins = aspath.get_origin();

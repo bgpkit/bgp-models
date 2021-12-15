@@ -15,21 +15,49 @@ use crate::err::BgpModelsError;
 /// The meta information includes:
 /// 1. `afi`: address family ([Afi]): IPv4 or IPv6,
 /// 2. `asn_len`: AS number length ([AsnLength]): 16 or 32 bits.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Copy)]
 pub struct AddrMeta {
     pub afi: Afi,
     pub asn_len: AsnLength,
 }
 
 /// AS number length: 16 or 32 bits.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Copy)]
 pub enum AsnLength {
     Bits16,
     Bits32,
 }
 
 /// ASN -- Autonomous System Number
-pub type Asn = u32;
+#[derive(Debug, Clone, Serialize, Copy)]
+pub struct Asn {
+    pub asn: i32,
+    pub len: AsnLength,
+}
+
+impl PartialEq for Asn {
+    fn eq(&self, other: &Self) -> bool {
+        self.asn==other.asn
+    }
+}
+
+impl PartialEq<i32> for Asn {
+    fn eq(&self, other: &i32) -> bool {
+        self.asn==*other
+    }
+}
+
+impl From<i32> for Asn {
+    fn from(v: i32) -> Self {
+        Asn{asn:v, len: AsnLength::Bits32}
+    }
+}
+
+impl Into<i32> for Asn {
+    fn into(self) -> i32 {
+        self.asn
+    }
+}
 
 /// AFI -- Address Family Identifier
 ///
@@ -61,7 +89,7 @@ pub enum NextHopAddress {
 }
 
 /// A representation of a IP prefix with optional path ID.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct NetworkPrefix {
     pub prefix: IpNetwork,
     pub path_id: u32,
@@ -96,6 +124,12 @@ impl NetworkPrefix {
 impl Display for NetworkPrefix {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.prefix)
+    }
+}
+
+impl Display for Asn {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.asn)
     }
 }
 
