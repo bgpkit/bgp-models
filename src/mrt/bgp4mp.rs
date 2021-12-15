@@ -5,7 +5,7 @@ use crate::bgp::BgpMessage;
 use crate::network::{Afi, Asn};
 
 /// BGP states enum.
-#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq, Eq)]
 pub enum BgpState {
     Idle = 1,
     Connect = 2,
@@ -16,7 +16,7 @@ pub enum BgpState {
 }
 
 /// BGP4MP message types.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub enum Bgp4Mp {
     Bgp4MpStateChange(Bgp4MpStateChange),
     Bgp4MpStateChangeAs4(Bgp4MpStateChange),
@@ -27,7 +27,7 @@ pub enum Bgp4Mp {
 }
 
 /// BGP4MP message subtypes.
-#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq, Eq)]
 pub enum Bgp4MpType {
     Bgp4MpStateChange = 0,
     Bgp4MpMessage = 1,
@@ -42,7 +42,7 @@ pub enum Bgp4MpType {
 }
 
 /// BGP4MP state change message.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Bgp4MpStateChange {
     pub msg_type: Bgp4MpType,
     pub peer_asn: Asn,
@@ -56,7 +56,7 @@ pub struct Bgp4MpStateChange {
 }
 
 /// BGP4MP message.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Bgp4MpMessage {
     pub msg_type: Bgp4MpType,
     pub peer_asn: Asn,

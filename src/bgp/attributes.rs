@@ -100,7 +100,7 @@ pub enum AtomicAggregate {
 }
 
 /// The `Attribute` enum represents different kinds of Attribute values.
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
 pub enum Attribute {
     Origin(Origin),
     AsPath(AsPath),
@@ -125,7 +125,7 @@ pub enum Attribute {
 /////////////
 
 /// Enum of AS path segment.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub enum AsPathSegment {
     AsSequence(Vec<Asn>),
     AsSet(Vec<Asn>),
@@ -145,7 +145,7 @@ impl AsPathSegment {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub struct AsPath {
     pub segments: Vec<AsPathSegment>,
 }
@@ -242,7 +242,7 @@ impl AsPath {
 // NLRI //
 //////////
 
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
 pub struct Nlri {
     pub afi: Afi,
     pub safi: Safi,

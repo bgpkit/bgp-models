@@ -22,14 +22,14 @@ pub struct AddrMeta {
 }
 
 /// AS number length: 16 or 32 bits.
-#[derive(Debug, Clone, Serialize, Copy, Deserialize)]
+#[derive(Debug, Clone, Serialize, Copy, Deserialize, PartialEq, Eq)]
 pub enum AsnLength {
     Bits16,
     Bits32,
 }
 
 /// ASN -- Autonomous System Number
-#[derive(Debug, Clone, Serialize, Copy, Deserialize)]
+#[derive(Debug, Clone, Serialize, Copy, Deserialize, Eq)]
 pub struct Asn {
     pub asn: i32,
     pub len: AsnLength,
@@ -74,7 +74,7 @@ impl Into<i32> for Asn {
 /// AFI -- Address Family Identifier
 ///
 /// https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml
-#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize, Eq)]
 pub enum Afi {
     Ipv4 = 1,
     Ipv6 = 2,
@@ -83,7 +83,7 @@ pub enum Afi {
 /// SAFI -- Subsequent Address Family Identifier
 ///
 /// SAFI can be: Unicast, Multicast, or both.
-#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize, Eq)]
 pub enum Safi {
     Unicast = 1,
     Multicast = 2,
@@ -93,7 +93,7 @@ pub enum Safi {
 /// enum that represents the type of the next hop address.
 ///
 /// [NextHopAddress] is used when parsing for next hops in [Nlri].
-#[derive(Debug, PartialEq, Copy, Clone, Serialize)]
+#[derive(Debug, PartialEq, Copy, Clone, Serialize, Eq)]
 pub enum NextHopAddress {
     Ipv4(Ipv4Addr),
     Ipv6(Ipv6Addr),
@@ -101,7 +101,7 @@ pub enum NextHopAddress {
 }
 
 /// A representation of a IP prefix with optional path ID.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct NetworkPrefix {
     pub prefix: IpNetwork,
     pub path_id: u32,

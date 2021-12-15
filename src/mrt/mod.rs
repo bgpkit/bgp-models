@@ -22,7 +22,7 @@ use serde::Serialize;
 ///
 /// See [CommonHeader] for the content in header, and [MrtMessage] for the
 /// message format.
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub struct MrtRecord {
     pub common_header: CommonHeader,
     pub message: MrtMessage,
@@ -68,7 +68,7 @@ pub struct MrtRecord {
 ///   `BGP4MP_ET`
 ///
 /// [header-link]: https://datatracker.ietf.org/doc/html/rfc6396#section-2
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, PartialEq, Eq)]
 pub struct CommonHeader {
     pub timestamp: u32,
     pub microsecond_timestamp: Option<u32>,
@@ -77,7 +77,7 @@ pub struct CommonHeader {
     pub length: u32,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub enum MrtMessage {
     TableDumpMessage(TableDumpMessage),
     TableDumpV2Message(TableDumpV2Message),
@@ -106,7 +106,7 @@ pub enum MrtMessage {
 ///     48   OSPFv3
 ///     49   OSPFv3_ET
 /// ```
-#[derive(Debug, Primitive, Copy, Clone, Serialize)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq, Eq)]
 #[allow(non_camel_case_types)]
 pub enum EntryType {
     // START DEPRECATED

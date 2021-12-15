@@ -21,7 +21,7 @@ pub enum BgpMessageType {
 }
 
 // https://tools.ietf.org/html/rfc4271#section-4
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub enum BgpMessage{
     Open(BgpOpenMessage),
     Update(BgpUpdateMessage),
@@ -50,7 +50,7 @@ pub enum BgpMessage{
 ///  |                                                               |
 ///  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct BgpOpenMessage {
     pub version: u8,
     pub asn: Asn,
@@ -59,26 +59,26 @@ pub struct BgpOpenMessage {
     pub opt_params: Vec<OptParam>
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct OptParam {
 
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct BgpUpdateMessage {
     pub withdrawn_prefixes: Vec<NetworkPrefix>,
     pub attributes: Vec<Attribute>,
     pub announced_prefixes: Vec<NetworkPrefix>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct BgpNotificationMessage {
     pub error_code: u8,
     pub error_subcode: u8,
     pub data: Vec<u8>,
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct BgpKeepAliveMessage {
 
 }
