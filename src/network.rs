@@ -47,6 +47,18 @@ impl PartialEq<i32> for Asn {
     }
 }
 
+impl PartialEq<u32> for Asn {
+    fn eq(&self, other: &u32) -> bool {
+        self.asn as u32==*other
+    }
+}
+
+impl From<u32> for Asn {
+    fn from(v: u32) -> Self {
+        Asn{asn:v as i32, len: AsnLength::Bits32}
+    }
+}
+
 impl From<i32> for Asn {
     fn from(v: i32) -> Self {
         Asn{asn:v, len: AsnLength::Bits32}
