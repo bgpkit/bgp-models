@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::str::FromStr;
 use ipnetwork::IpNetwork;
-use serde::{Serialize, Serializer};
+use serde::{Serialize, Serializer, Deserialize};
 use crate::err::BgpModelsError;
 
 /// Meta information for an address/prefix.
@@ -22,14 +22,14 @@ pub struct AddrMeta {
 }
 
 /// AS number length: 16 or 32 bits.
-#[derive(Debug, Clone, Serialize, Copy)]
+#[derive(Debug, Clone, Serialize, Copy, Deserialize)]
 pub enum AsnLength {
     Bits16,
     Bits32,
 }
 
 /// ASN -- Autonomous System Number
-#[derive(Debug, Clone, Serialize, Copy)]
+#[derive(Debug, Clone, Serialize, Copy, Deserialize)]
 pub struct Asn {
     pub asn: i32,
     pub len: AsnLength,
