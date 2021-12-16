@@ -3,7 +3,7 @@ use std::net::{IpAddr, Ipv4Addr};
 use std::collections::HashMap;
 use crate::network::{Afi, Asn, NetworkPrefix, Safi};
 use serde::Serialize;
-use crate::bgp::Attribute;
+use crate::bgp::AttributeValue;
 
 /// TableDump message version 1
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -15,7 +15,7 @@ pub struct TableDumpMessage {
     pub originated_time: u64,
     pub peer_address: IpAddr,
     pub peer_asn: Asn,
-    pub attributes: Vec<Attribute>,
+    pub attributes: Vec<AttributeValue>,
 }
 
 /// TableDump message version 2 enum
@@ -137,7 +137,7 @@ pub struct RibGenericEntries{
 pub struct RibEntry {
     pub peer_index: u16,
     pub originated_time: u32,
-    pub attributes: Vec<Attribute>
+    pub attributes: Vec<AttributeValue>
 }
 
 /// peer index table.

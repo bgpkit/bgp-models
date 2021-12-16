@@ -99,9 +99,16 @@ pub enum AtomicAggregate {
     AG = 1,
 }
 
-/// The `Attribute` enum represents different kinds of Attribute values.
+/// BGP Attribute struct with attribute value and flag
 #[derive(Debug, PartialEq, Clone, Serialize, Eq)]
-pub enum Attribute {
+pub struct Attribute {
+    value: AttributeValue,
+    flag: u8,
+}
+
+/// The `AttributeValue` enum represents different kinds of Attribute values.
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
+pub enum AttributeValue {
     Origin(Origin),
     AsPath(AsPath),
     As4Path(AsPath),
