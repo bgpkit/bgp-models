@@ -67,7 +67,7 @@ pub struct OptParam {
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct BgpUpdateMessage {
     pub withdrawn_prefixes: Vec<NetworkPrefix>,
-    pub attributes: Vec<AttributeValue>,
+    pub attributes: Vec<Attribute>,
     pub announced_prefixes: Vec<NetworkPrefix>,
 }
 
