@@ -102,8 +102,8 @@ pub enum AtomicAggregate {
 /// BGP Attribute struct with attribute value and flag
 #[derive(Debug, PartialEq, Clone, Serialize, Eq)]
 pub struct Attribute {
-    value: AttributeValue,
-    flag: u8,
+    pub value: AttributeValue,
+    pub flag: u8,
 }
 
 /// The `AttributeValue` enum represents different kinds of Attribute values.
