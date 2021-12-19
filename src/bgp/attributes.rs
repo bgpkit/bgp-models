@@ -99,9 +99,17 @@ pub enum AtomicAggregate {
     AG = 1,
 }
 
-/// The `Attribute` enum represents different kinds of Attribute values.
-#[derive(Debug, PartialEq, Clone, Serialize)]
-pub enum Attribute {
+/// BGP Attribute struct with attribute value and flag
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
+pub struct Attribute {
+    pub attr_type: AttrType,
+    pub value: AttributeValue,
+    pub flag: u8,
+}
+
+/// The `AttributeValue` enum represents different kinds of Attribute values.
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
+pub enum AttributeValue {
     Origin(Origin),
     AsPath(AsPath),
     As4Path(AsPath),
@@ -125,7 +133,7 @@ pub enum Attribute {
 /////////////
 
 /// Enum of AS path segment.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub enum AsPathSegment {
     AsSequence(Vec<Asn>),
     AsSet(Vec<Asn>),
@@ -145,7 +153,7 @@ impl AsPathSegment {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Eq)]
 pub struct AsPath {
     pub segments: Vec<AsPathSegment>,
 }
@@ -242,7 +250,7 @@ impl AsPath {
 // NLRI //
 //////////
 
-#[derive(Debug, PartialEq, Clone, Serialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Eq)]
 pub struct Nlri {
     pub afi: Afi,
     pub safi: Safi,
@@ -385,20 +393,20 @@ mod tests {
     #[test]
     fn test_aspath_as4path_merge() {
         let aspath = AsPath{
-            segments: vec![AsPathSegment::AsSequence([1,2,3,5].to_vec())]
+            segments: vec![AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec())]
         };
         let as4path = AsPath{
-            segments: vec![AsPathSegment::AsSequence([2,3,7].to_vec())]
+            segments: vec![AsPathSegment::AsSequence([2,3,7].map(|i|{i.into()}).to_vec())]
         };
         let newpath = AsPath::merge_aspath_as4path(&aspath, &as4path).unwrap();
-        assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].to_vec()));
+        assert_eq!(newpath.segments[0], AsPathSegment::AsSequence([1,2,3,7].map(|i|{i.into()}).to_vec()));
     }
 
     #[test]
     fn test_get_origin() {
         let aspath = AsPath{
             segments: vec![
-                AsPathSegment::AsSequence([1,2,3,5].to_vec()),
+                AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec()),
             ]
         };
         let origins = aspath.get_origin();
@@ -407,8 +415,8 @@ mod tests {
 
         let aspath = AsPath{
             segments: vec![
-                AsPathSegment::AsSequence([1,2,3,5].to_vec()),
-                AsPathSegment::AsSet([7,8].to_vec())
+                AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec()),
+                AsPathSegment::AsSequence([7,8].map(|i|{i.into()}).to_vec()),
             ]
         };
         let origins = aspath.get_origin();

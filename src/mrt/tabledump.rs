@@ -6,7 +6,7 @@ use serde::Serialize;
 use crate::bgp::Attribute;
 
 /// TableDump message version 1
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct TableDumpMessage {
     pub view_number: u16,
     pub sequence_number: u16,
@@ -19,7 +19,7 @@ pub struct TableDumpMessage {
 }
 
 /// TableDump message version 2 enum
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub enum TableDumpV2Message {
     PeerIndexTable(PeerIndexTable),
     RibAfiEntries(RibAfiEntries),
@@ -29,7 +29,7 @@ pub enum TableDumpV2Message {
 /// TableDump version 2 subtypes.
 ///
 /// <https://www.iana.org/assignments/mrt/mrt.xhtml#subtype-codes>
-#[derive(Debug, Primitive, Copy, Clone, Serialize)]
+#[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq, Eq)]
 pub enum TableDumpV2Type{
     PeerIndexTable = 1,
     RibIpv4Unicast = 2,
@@ -74,8 +74,9 @@ pub enum TableDumpV2Type{
 ///        |         Entry Count           |  RIB Entries (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct RibAfiEntries{
+    pub rib_type: TableDumpV2Type,
     pub sequence_number: u32,
     pub prefix: NetworkPrefix,
     pub rib_entries: Vec<RibEntry>,
@@ -102,7 +103,7 @@ pub struct RibAfiEntries{
 ///        |         Entry Count           |  RIB Entries (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct RibGenericEntries{
     pub sequence_number: u32,
     pub afi: Afi,
@@ -132,7 +133,7 @@ pub struct RibGenericEntries{
 ///        |                    BGP Attributes... (variable)
 ///        +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 /// ```
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct RibEntry {
     pub peer_index: u16,
     pub originated_time: u32,
@@ -150,7 +151,7 @@ pub struct RibEntry {
 ///    itself and includes full MRT record headers.  The RIB entry MRT
 ///    records MUST immediately follow the PEER_INDEX_TABLE MRT record.
 /// ```
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct PeerIndexTable{
     pub collector_bgp_id: Ipv4Addr,
     pub view_name_length: u16,
@@ -160,7 +161,7 @@ pub struct PeerIndexTable{
 }
 
 /// Peer struct.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Peer {
     pub peer_type: u8,
     pub peer_bgp_id: Ipv4Addr,

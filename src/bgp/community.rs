@@ -4,14 +4,14 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 use serde::Serialize;
 use crate::network::Asn;
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq)]
 pub enum MetaCommunity {
     Community(Community),
     ExtendedCommunity(ExtendedCommunity),
     LargeCommunity(LargeCommunity),
 }
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+#[derive(Debug, PartialEq, Copy, Clone, Eq)]
 pub enum Community {
     NoExport,
     NoAdvertise,
@@ -19,7 +19,7 @@ pub enum Community {
     Custom(Asn, u16),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct LargeCommunity {
     pub global_administrator: u32,
     pub local_data: [u32; 2],
@@ -79,7 +79,7 @@ pub enum ExtendedCommunityType {
 ///       (*) Present for Extended types only, used for the Value field
 ///           otherwise.
 /// ```
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub enum ExtendedCommunity {
     TransitiveTwoOctetAsSpecific(TwoOctetAsSpecific),
     TransitiveIpv4AddressSpecific(Ipv4AddressSpecific),
@@ -93,7 +93,7 @@ pub enum ExtendedCommunity {
     Raw([u8; 8]),
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct Ipv6AddressSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
@@ -107,7 +107,7 @@ pub struct Ipv6AddressSpecific {
 /// Two-Octet AS Specific Extended Community
 ///
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.1>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct TwoOctetAsSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
@@ -120,7 +120,7 @@ pub struct TwoOctetAsSpecific {
 /// Four-Octet AS Specific Extended Community
 ///
 /// <https://datatracker.ietf.org/doc/html/rfc5668#section-2>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct FourOctetAsSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
@@ -133,7 +133,7 @@ pub struct FourOctetAsSpecific {
 /// IPv4 Address Specific Extended Community
 ///
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.2>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct Ipv4AddressSpecific {
     pub ec_type: u8,
     pub ec_subtype: u8,
@@ -146,7 +146,7 @@ pub struct Ipv4AddressSpecific {
 /// Opaque Extended Community
 ///
 /// <https://datatracker.ietf.org/doc/html/rfc4360#section-3.3>
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Eq)]
 pub struct Opaque {
     pub ec_type: u8,
     pub ec_subtype: u8,

@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 use std::net::{Ipv4Addr, Ipv6Addr};
 use std::str::FromStr;
 use ipnetwork::IpNetwork;
-use serde::{Serialize, Serializer};
+use serde::{Serialize, Serializer, Deserialize};
 use crate::err::BgpModelsError;
 
 /// Meta information for an address/prefix.
@@ -15,26 +15,66 @@ use crate::err::BgpModelsError;
 /// The meta information includes:
 /// 1. `afi`: address family ([Afi]): IPv4 or IPv6,
 /// 2. `asn_len`: AS number length ([AsnLength]): 16 or 32 bits.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Copy)]
 pub struct AddrMeta {
     pub afi: Afi,
     pub asn_len: AsnLength,
 }
 
 /// AS number length: 16 or 32 bits.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Copy, Deserialize, PartialEq, Eq)]
 pub enum AsnLength {
     Bits16,
     Bits32,
 }
 
 /// ASN -- Autonomous System Number
-pub type Asn = u32;
+#[derive(Debug, Clone, Serialize, Copy, Deserialize, Eq)]
+pub struct Asn {
+    pub asn: i32,
+    pub len: AsnLength,
+}
+
+impl PartialEq for Asn {
+    fn eq(&self, other: &Self) -> bool {
+        self.asn==other.asn
+    }
+}
+
+impl PartialEq<i32> for Asn {
+    fn eq(&self, other: &i32) -> bool {
+        self.asn==*other
+    }
+}
+
+impl PartialEq<u32> for Asn {
+    fn eq(&self, other: &u32) -> bool {
+        self.asn as u32==*other
+    }
+}
+
+impl From<u32> for Asn {
+    fn from(v: u32) -> Self {
+        Asn{asn:v as i32, len: AsnLength::Bits32}
+    }
+}
+
+impl From<i32> for Asn {
+    fn from(v: i32) -> Self {
+        Asn{asn:v, len: AsnLength::Bits32}
+    }
+}
+
+impl Into<i32> for Asn {
+    fn into(self) -> i32 {
+        self.asn
+    }
+}
 
 /// AFI -- Address Family Identifier
 ///
 /// https://www.iana.org/assignments/address-family-numbers/address-family-numbers.xhtml
-#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize, Eq)]
 pub enum Afi {
     Ipv4 = 1,
     Ipv6 = 2,
@@ -43,7 +83,7 @@ pub enum Afi {
 /// SAFI -- Subsequent Address Family Identifier
 ///
 /// SAFI can be: Unicast, Multicast, or both.
-#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize)]
+#[derive(Debug, PartialEq, Primitive, Clone, Copy, Serialize, Eq)]
 pub enum Safi {
     Unicast = 1,
     Multicast = 2,
@@ -53,7 +93,7 @@ pub enum Safi {
 /// enum that represents the type of the next hop address.
 ///
 /// [NextHopAddress] is used when parsing for next hops in [Nlri].
-#[derive(Debug, PartialEq, Copy, Clone, Serialize)]
+#[derive(Debug, PartialEq, Copy, Clone, Serialize, Eq)]
 pub enum NextHopAddress {
     Ipv4(Ipv4Addr),
     Ipv6(Ipv6Addr),
@@ -61,7 +101,7 @@ pub enum NextHopAddress {
 }
 
 /// A representation of a IP prefix with optional path ID.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy)]
 pub struct NetworkPrefix {
     pub prefix: IpNetwork,
     pub path_id: u32,
@@ -96,6 +136,12 @@ impl NetworkPrefix {
 impl Display for NetworkPrefix {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.prefix)
+    }
+}
+
+impl Display for Asn {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.asn)
     }
 }
 
