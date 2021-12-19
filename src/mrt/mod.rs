@@ -22,7 +22,7 @@ use serde::Serialize;
 ///
 /// See [CommonHeader] for the content in header, and [MrtMessage] for the
 /// message format.
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Clone)]
 pub struct MrtRecord {
     pub common_header: CommonHeader,
     pub message: MrtMessage,
@@ -77,7 +77,7 @@ pub struct CommonHeader {
     pub length: u32,
 }
 
-#[derive(Debug, Serialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, PartialEq, Eq, Clone)]
 pub enum MrtMessage {
     TableDumpMessage(TableDumpMessage),
     TableDumpV2Message(TableDumpV2Message),
