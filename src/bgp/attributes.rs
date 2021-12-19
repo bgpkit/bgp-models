@@ -416,7 +416,7 @@ mod tests {
         let aspath = AsPath{
             segments: vec![
                 AsPathSegment::AsSequence([1,2,3,5].map(|i|{i.into()}).to_vec()),
-                AsPathSegment::AsSequence([7,8].map(|i|{i.into()}).to_vec()),
+                AsPathSegment::AsSet([7,8].map(|i|{i.into()}).to_vec()),
             ]
         };
         let origins = aspath.get_origin();
