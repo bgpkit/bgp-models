@@ -76,9 +76,9 @@ pub enum ParamValue {
 /// <https://datatracker.ietf.org/doc/html/rfc3392>
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Capability {
-    code: u8,
-    len: u8,
-    value: Vec<u8>
+    pub code: u8,
+    pub len: u8,
+    pub value: Vec<u8>
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
