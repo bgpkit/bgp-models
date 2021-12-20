@@ -56,12 +56,29 @@ pub struct BgpOpenMessage {
     pub asn: Asn,
     pub hold_time: u16,
     pub sender_ip: Ipv4Addr,
+    pub extended_length: bool,
     pub opt_params: Vec<OptParam>
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct OptParam {
+    pub param_type: u8,
+    pub param_len: u16,
+    pub param_value: ParamValue,
+}
 
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub enum ParamValue {
+    Raw(Vec<u8>),
+    Capability(Capability)
+}
+
+/// <https://datatracker.ietf.org/doc/html/rfc3392>
+#[derive(Debug, Clone, Serialize, PartialEq, Eq)]
+pub struct Capability {
+    code: u8,
+    len: u8,
+    value: Vec<u8>
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
