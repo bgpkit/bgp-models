@@ -31,7 +31,7 @@ pub enum AsnLength {
 /// ASN -- Autonomous System Number
 #[derive(Debug, Clone, Serialize, Copy, Deserialize, Eq)]
 pub struct Asn {
-    pub asn: i32,
+    pub asn: u32,
     pub len: AsnLength,
 }
 
@@ -43,30 +43,36 @@ impl PartialEq for Asn {
 
 impl PartialEq<i32> for Asn {
     fn eq(&self, other: &i32) -> bool {
-        self.asn==*other
+        self.asn as i32==*other
     }
 }
 
 impl PartialEq<u32> for Asn {
     fn eq(&self, other: &u32) -> bool {
-        self.asn as u32==*other
+        self.asn==*other
     }
 }
 
 impl From<u32> for Asn {
     fn from(v: u32) -> Self {
-        Asn{asn:v as i32, len: AsnLength::Bits32}
+        Asn{asn:v, len: AsnLength::Bits32}
     }
 }
 
 impl From<i32> for Asn {
     fn from(v: i32) -> Self {
-        Asn{asn:v, len: AsnLength::Bits32}
+        Asn{asn:v as u32, len: AsnLength::Bits32}
     }
 }
 
 impl Into<i32> for Asn {
     fn into(self) -> i32 {
+        self.asn as i32
+    }
+}
+
+impl Into<u32> for Asn {
+    fn into(self) -> u32 {
         self.asn
     }
 }
