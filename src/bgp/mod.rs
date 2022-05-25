@@ -4,6 +4,7 @@ pub mod attributes;
 pub mod elem;
 pub mod community;
 pub mod error;
+pub mod capabilities;
 
 pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
@@ -12,6 +13,7 @@ pub use crate::bgp::error::*;
 
 use serde::Serialize;
 use std::net::Ipv4Addr;
+use crate::bgp::capabilities::BgpCapabilityType;
 use crate::bgp::error::BgpError;
 use crate::network::*;
 
@@ -76,12 +78,16 @@ pub enum ParamValue {
     Capability(Capability)
 }
 
-/// <https://datatracker.ietf.org/doc/html/rfc3392>
+/// BGP Capability.
+///
+/// - RFC3392: <https://datatracker.ietf.org/doc/html/rfc3392>
+/// - Capability codes: <https://www.iana.org/assignments/capability-codes/capability-codes.xhtml#capability-codes-2>
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct Capability {
     pub code: u8,
     pub len: u8,
-    pub value: Vec<u8>
+    pub value: Vec<u8>,
+    pub capability_type: BgpCapabilityType,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
