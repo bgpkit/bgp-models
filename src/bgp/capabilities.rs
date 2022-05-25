@@ -3,7 +3,7 @@ use num_traits::FromPrimitive;
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 
-/// Error for parsing BGP error code
+/// BGP capability parsing error
 #[derive(Debug, PartialEq, Eq, Clone, Serialize)]
 pub enum BgpCapabilityParsingError {
     Unassigned(u8),
