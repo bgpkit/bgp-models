@@ -3,13 +3,16 @@
 pub mod attributes;
 pub mod elem;
 pub mod community;
+pub mod error;
 
 pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
 pub use crate::bgp::community::*;
+pub use crate::bgp::error::*;
 
 use serde::Serialize;
 use std::net::Ipv4Addr;
+use crate::bgp::error::BgpError;
 use crate::network::*;
 
 #[derive(Debug, Primitive, Copy, Clone, Serialize, PartialEq)]
@@ -92,6 +95,7 @@ pub struct BgpUpdateMessage {
 pub struct BgpNotificationMessage {
     pub error_code: u8,
     pub error_subcode: u8,
+    pub error_type: Result<BgpError, BgpErrorCodeParsingError>,
     pub data: Vec<u8>,
 }
 
