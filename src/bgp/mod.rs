@@ -10,6 +10,7 @@ pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
 pub use crate::bgp::community::*;
 pub use crate::bgp::error::*;
+pub use crate::bgp::capabilities::*;
 
 use serde::Serialize;
 use std::net::Ipv4Addr;
