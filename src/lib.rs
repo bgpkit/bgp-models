@@ -16,6 +16,7 @@ RFCs. Here is a list of them:
 - [X] [RFC 6793](https://datatracker.ietf.org/doc/html/rfc6793): BGP Support for Four-Octet Autonomous System (AS) Number Space
 - [X] [RFC 7911](https://datatracker.ietf.org/doc/html/rfc7911): Advertisement of Multiple Paths in BGP (ADD-PATH)
 - [X] [RFC 9072](https://datatracker.ietf.org/doc/html/rfc9072): Extended Optional Parameters Length for BGP OPEN Message Updates
+- [X] [RFC 9234](https://datatracker.ietf.org/doc/html/rfc9234): Route Leak Prevention and Detection Using Roles in UPDATE and OPEN Messages
 
 ### MRT
 

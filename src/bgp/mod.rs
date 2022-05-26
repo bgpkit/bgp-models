@@ -5,12 +5,14 @@ pub mod elem;
 pub mod community;
 pub mod error;
 pub mod capabilities;
+pub mod role;
 
 pub use crate::bgp::attributes::*;
 pub use crate::bgp::elem::*;
 pub use crate::bgp::community::*;
 pub use crate::bgp::error::*;
 pub use crate::bgp::capabilities::*;
+pub use crate::bgp::role::*;
 
 use serde::Serialize;
 use std::net::Ipv4Addr;
