@@ -90,7 +90,7 @@ pub struct Capability {
     pub code: u8,
     pub len: u8,
     pub value: Vec<u8>,
-    pub capability_type: BgpCapabilityType,
+    pub capability_type: Option<BgpCapabilityType>,
 }
 
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
@@ -104,7 +104,7 @@ pub struct BgpUpdateMessage {
 pub struct BgpNotificationMessage {
     pub error_code: u8,
     pub error_subcode: u8,
-    pub error_type: Result<BgpError, BgpErrorCodeParsingError>,
+    pub error_type: Option<BgpError>,
     pub data: Vec<u8>,
 }
 
