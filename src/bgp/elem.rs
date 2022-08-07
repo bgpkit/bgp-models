@@ -6,16 +6,25 @@ use itertools::Itertools;
 use crate::bgp::attributes::{AsPath, AtomicAggregate, Origin};
 use crate::bgp::community::*;
 use crate::network::{Asn, NetworkPrefix};
-use serde::Serialize;
+use serde::{Serialize, Serializer};
 
 /// Element type.
 ///
 /// - ANNOUNCE: announcement/reachable prefix
 /// - WITHDRAW: withdrawn/unreachable prefix
-#[derive(Debug, Clone, Copy, Serialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum ElemType {
     ANNOUNCE,
     WITHDRAW,
+}
+
+impl Serialize for ElemType {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        Ok(serializer.serialize_str(match self {
+            ElemType::ANNOUNCE => {"announce"}
+            ElemType::WITHDRAW => {"withdraw"}
+        })?)
+    }
 }
 
 /// BgpElem represents per-prefix BGP element.
@@ -27,6 +36,7 @@ pub enum ElemType {
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub struct BgpElem {
     pub timestamp: f64,
+    #[serde(rename="type")]
     pub elem_type: ElemType,
     pub peer_ip: IpAddr,
     pub peer_asn: Asn,
@@ -161,7 +171,7 @@ mod tests {
             prefix: NetworkPrefix::from_str("8.8.8.0/24").unwrap(),
             ..Default::default()
         };
-        dbg!(elem);
+        println!("{}",serde_json::json!(elem).to_string());
     }
 
     #[test]
