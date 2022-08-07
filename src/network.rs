@@ -29,7 +29,7 @@ pub enum AsnLength {
 }
 
 /// ASN -- Autonomous System Number
-#[derive(Debug, Clone, Serialize, Copy, Deserialize, Eq)]
+#[derive(Debug, Clone, Copy, Eq)]
 pub struct Asn {
     pub asn: u32,
     pub len: AsnLength,
@@ -74,6 +74,12 @@ impl Into<i32> for Asn {
 impl Into<u32> for Asn {
     fn into(self) -> u32 {
         self.asn
+    }
+}
+
+impl Serialize for Asn {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: Serializer {
+        Ok( serializer.serialize_u32(self.asn)?)
     }
 }
 
